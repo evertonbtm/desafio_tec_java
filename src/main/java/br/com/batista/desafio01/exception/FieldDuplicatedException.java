@@ -2,12 +2,12 @@ package br.com.batista.desafio01.exception;
 
 import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
 
-public class UserTypeNotFoundException extends ApiInternalServerErrorException {
+public class FieldDuplicatedException extends ApiInternalServerErrorException {
 
     private String code;
 
-    public UserTypeNotFoundException(Class clazz, String field){
-        super(clazz.getSimpleName() + " not found "+ field );
+    public FieldDuplicatedException (Class clazz, String field, String code){
+        super(clazz.getSimpleName() + " : " + field + " is duplicated. code = "+code);
     }
 
     public String getCode() {

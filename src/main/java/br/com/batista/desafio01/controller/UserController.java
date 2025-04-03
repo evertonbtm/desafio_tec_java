@@ -38,7 +38,7 @@ public class UserController {
             description = "user.controller.create.message"
     )
     public ResponseEntity<UserDTO> create(@Schema(description = "user.controller.create.hint")  @Valid @RequestBody UserDTO userDTO) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(userService.createUpdate(userDTO)));
+        return ResponseEntity.status(HttpStatus.OK).body(new UserDTO(userService.createUpdate(userDTO)));
     }
     @DeleteMapping
     @Operation(
@@ -46,7 +46,7 @@ public class UserController {
     )
     public ResponseEntity<BaseReturnDTO> delete(@Schema(description = "user.controller.delete.param.hint") @ParameterObject String param) throws Exception {
 
-        userService.remove(param);
+        userService.delete(param);
 
         return ResponseEntity.status(HttpStatus.OK).body(new BaseReturnDTO(
                 messageService.getMessage("default.status.success"),

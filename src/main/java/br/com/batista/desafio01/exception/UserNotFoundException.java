@@ -7,7 +7,7 @@ public class UserNotFoundException extends ApiInternalServerErrorException {
     private String code;
 
     public UserNotFoundException(Class clazz, String field, String code){
-        super(clazz.getSimpleName() + " :  User not found "+ field + " = "+code);
+        super(clazz.getSimpleName() + " not found "+ field + " = "+code);
     }
 
     public String getCode() {

@@ -27,4 +27,10 @@ public class UserSpecification {
                     : criteriaBuilder.like(criteriaBuilder.lower(root.get("document")), "%" + document.trim().toLowerCase() + "%");
         };
     }
+
+    public static Specification<User> withDeleted(boolean deleted) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("deleted"), deleted);
+        };
+    }
 }

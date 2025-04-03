@@ -2,12 +2,12 @@ package br.com.batista.desafio01.exception;
 
 import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
 
-public class UserTypeTransactionException extends ApiInternalServerErrorException {
+public class UnavailableException extends ApiInternalServerErrorException {
 
     private String code;
 
-    public UserTypeTransactionException(Class clazz, String field, String type){
-        super(clazz.getSimpleName() + " : " + field + " Não é permitido realizar trasnferencia como Lojista");
+    public UnavailableException(Class clazz){
+        super(clazz.getSimpleName() + " : falha ao consultar serviços, realize uma nova tentativa em breve");
     }
 
     public String getCode() {

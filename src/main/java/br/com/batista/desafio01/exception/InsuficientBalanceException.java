@@ -2,12 +2,12 @@ package br.com.batista.desafio01.exception;
 
 import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
 
-public class UserTypeNotFoundException extends ApiInternalServerErrorException {
+public class InsuficientBalanceException extends ApiInternalServerErrorException {
 
     private String code;
 
-    public UserTypeNotFoundException(Class clazz, String field){
-        super(clazz.getSimpleName() + " not found "+ field );
+    public InsuficientBalanceException(Class clazz, String field, String balance){
+        super(clazz.getSimpleName() + " : " + field + " nao existe saldo suficiente "+balance);
     }
 
     public String getCode() {

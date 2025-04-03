@@ -1,6 +1,6 @@
 package br.com.batista.desafio01.repository;
 
-import br.com.batista.desafio01.model.entities.User;
+import br.com.batista.desafio01.model.entities.Transaction;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IUserRepository extends CrudRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface ITransactionRepository extends CrudRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
 
-    @Query("SELECT u FROM User AS u WHERE u.document = :document OR u.email = :email")
-    List<User> findListByDocumentOrEmail(@Param("document") String document, @Param("email") String email);
+
+    @Query("SELECT t FROM Transaction AS t INNER JOIN User u WHERE u.document = :user or u.email = :user")
+    public List<Transaction> findListByUser(@Param("user") String user);
 
 }
