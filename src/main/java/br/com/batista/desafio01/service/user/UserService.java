@@ -85,7 +85,6 @@ public class UserService implements IUserService {
         save(user);
     }
 
-
     @Override
     @Transactional
     public User save(User user){
@@ -99,13 +98,13 @@ public class UserService implements IUserService {
             return null;
         }
 
-        User user = userList.get(0);
+        var user = userList.get(0);
 
         if(userList.size() > 1){
             throw new FieldDuplicatedException(User.class, "document or email", document);
         }
 
-        if(!document.equals(email) && 
+        if(!document.equals(email) &&
                 !(user.getDocument().equals(document) && user.getEmail().equals(email))){
             throw new FieldDuplicatedException(User.class, "document or email", document);
         }
@@ -121,7 +120,7 @@ public class UserService implements IUserService {
     @Override
     public User createUpdate(UserDTO userDTO) throws Exception {
 
-        User user = findByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail());
+        var user = findByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail());
 
         if(user == null){
             user = new User();

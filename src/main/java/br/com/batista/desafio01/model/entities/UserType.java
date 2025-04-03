@@ -1,6 +1,5 @@
 package br.com.batista.desafio01.model.entities;
 
-import br.com.batista.desafio01.model.entities.base.BaseUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
