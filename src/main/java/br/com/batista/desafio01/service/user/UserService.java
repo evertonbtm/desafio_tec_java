@@ -3,9 +3,11 @@ package br.com.batista.desafio01.service.user;
 import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.exception.FieldDuplicatedException;
 import br.com.batista.desafio01.exception.UserNotFoundException;
+import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.dto.user.UserSearchDTO;
 import br.com.batista.desafio01.model.entities.User;
+import br.com.batista.desafio01.repository.ITransactionRepository;
 import br.com.batista.desafio01.repository.IUserRepository;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
 import br.com.batista.desafio01.utils.ValidationUtils;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private IUserTypeService userTypeService;
+
+    @Autowired
+    private ITransactionRepository transactionRepository;
 
     @Autowired
     private MessageService messageService;
@@ -74,6 +80,9 @@ public class UserService implements IUserService {
             throw new UserNotFoundException(User.class, "document or email", param);
         }
 
+        user.getPayeeTransactions().forEach(transaction -> transactionRepository.delete(transaction));
+        user.getPayerTransactions().forEach(transaction -> transactionRepository.delete(transaction));
+
         userRepository.delete(user);
     }
 
@@ -111,7 +120,7 @@ public class UserService implements IUserService {
 
         user.setName(userDTO.getName());
         user.setPassword(userDTO.getPassword());
-        user.setMoneyBalance(userDTO.getMoneyBalance());
+        user.setMoneyBalance(userDTO.getMoneyBalance() == null ? BigDecimal.ZERO : userDTO.getMoneyBalance());
 
         validateUserType(user);
 
@@ -127,10 +136,14 @@ public class UserService implements IUserService {
             user.setUserType(userTypeService.findTypeShopkeeper());
 
         }
+
+        if(user.getUserType() == null){
+            throw new UserTypeNotFoundException(User.class, "userType");
+        }
     }
 
     public User findById(long idUser) throws Exception {
-        return userRepository.findById(idUser).orElseThrow(() -> new Exception(messageService.getMessage("user.notfound")));
+        return userRepository.findById(idUser).orElseThrow(() -> new UserNotFoundException(User.class, "idUser", String.valueOf(idUser)));
     }
 
     public List<UserDTO> findAll() {
