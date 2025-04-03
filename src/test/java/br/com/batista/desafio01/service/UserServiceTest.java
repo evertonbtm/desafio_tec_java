@@ -101,7 +101,7 @@ class UserServiceTest {
 
         String invalidParam = "invalidParam";
 
-        assertThrows(UserNotFoundException.class, () -> userService.remove(invalidParam));
+        assertThrows(UserNotFoundException.class, () -> userService.delete(invalidParam));
     }
 
     @Test
@@ -125,7 +125,7 @@ class UserServiceTest {
         when(IUserRepository.findListByDocumentOrEmail(paramDelete, paramDelete))
                 .thenReturn(Collections.singletonList(found));
 
-        assertDoesNotThrow( () -> userService.remove(paramDelete));
+        assertDoesNotThrow( () -> userService.delete(paramDelete));
     }
 
     @Test
@@ -172,7 +172,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void when_update_user_then_userNotFoundException() throws Exception {
+    public void when_update_user_then_userNotFoundException() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("updatedUser");
         userDTO.setPassword("updatedPassword123!@#");

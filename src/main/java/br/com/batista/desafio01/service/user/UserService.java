@@ -2,6 +2,7 @@ package br.com.batista.desafio01.service.user;
 
 import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.exception.FieldDuplicatedException;
+import br.com.batista.desafio01.exception.UserDeletedException;
 import br.com.batista.desafio01.exception.UserNotFoundException;
 import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
@@ -73,17 +74,15 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void remove(String param) throws Exception {
+    public void delete(String param) throws Exception {
         User user = findByDocumentOrEmail(param, param);
 
         if(user == null){
             throw new UserNotFoundException(User.class, "document or email", param);
         }
 
-        user.getPayeeTransactions().forEach(transaction -> transactionRepository.delete(transaction));
-        user.getPayerTransactions().forEach(transaction -> transactionRepository.delete(transaction));
-
-        userRepository.delete(user);
+        user.setDeleted(true);
+        save(user);
     }
 
 
@@ -100,12 +99,24 @@ public class UserService implements IUserService {
             return null;
         }
 
+        User user = userList.get(0);
+
         if(userList.size() > 1){
-            throw new FieldDuplicatedException(User.class, "document", document);
+            throw new FieldDuplicatedException(User.class, "document or email", document);
         }
 
-        return userList.get(0);
+        if(!document.equals(email) && 
+                !(user.getDocument().equals(document) && user.getEmail().equals(email))){
+            throw new FieldDuplicatedException(User.class, "document or email", document);
+        }
+
+        if(user.isDeleted()){
+            throw new UserDeletedException(User.class, "document or email", document);
+        }
+
+        return user;
     }
+
 
     @Override
     public User createUpdate(UserDTO userDTO) throws Exception {

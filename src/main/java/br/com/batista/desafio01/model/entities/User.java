@@ -41,6 +41,9 @@ public class User {
     @Column(name = "isActive")
     private boolean isActive;
 
+    @Column(name = "deleted")
+    private boolean deleted;
+
     @ManyToOne
     @JoinColumn(name="userType", nullable = false)
     @NotNull
@@ -160,5 +163,13 @@ public class User {
 
     public void setPayeeTransactions(List<Transaction> payeeTransactions) {
         this.payeeTransactions = payeeTransactions;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

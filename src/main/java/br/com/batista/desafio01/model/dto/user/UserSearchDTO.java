@@ -47,6 +47,7 @@ public class UserSearchDTO {
         return Specification
                 .allOf(UserSpecification.withName(name))
                 .and(UserSpecification.withEmail(email))
-                .and(UserSpecification.withDocument(document));
+                .and(UserSpecification.withDocument(document))
+                .and(UserSpecification.withDeleted(false));
     }
 }

@@ -24,7 +24,7 @@ public interface IUserService {
 
     User createUpdate(UserDTO userDTO) throws Exception;
 
-    void remove(String param) throws Exception;
+    void delete(String param) throws Exception;
 
     Page<UserDTO> search(UserSearchDTO search, Pageable pageable);
 }
