@@ -1,13 +1,12 @@
 package br.com.batista.desafio01.model.entities;
 
-import br.com.batista.desafio01.model.entities.base.BaseUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.context.annotation.Lazy;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "Users", uniqueConstraints = { @UniqueConstraint(name = "UC_USERDOC", columnNames = {"document"}), @UniqueConstraint(name = "UC_USERMAIL", columnNames = {"email"})})
@@ -57,6 +56,11 @@ public class User {
     @Column(name="isReceiveMoney", nullable = true)
     boolean isReceiveMoney= true;
 
+    @OneToMany(mappedBy = "payer")
+    private List<Transaction> payerTransactions;
+
+    @OneToMany(mappedBy = "payee")
+    private List<Transaction> payeeTransactions;
 
     public User(){
 
@@ -142,5 +146,19 @@ public class User {
         isActive = active;
     }
 
+    public List<Transaction> getPayerTransactions() {
+        return payerTransactions;
+    }
 
+    public void setPayerTransactions(List<Transaction> payerTransactions) {
+        this.payerTransactions = payerTransactions;
+    }
+
+    public List<Transaction> getPayeeTransactions() {
+        return payeeTransactions;
+    }
+
+    public void setPayeeTransactions(List<Transaction> payeeTransactions) {
+        this.payeeTransactions = payeeTransactions;
+    }
 }
