@@ -30,12 +30,12 @@ CREATE TABLE IF NOT EXISTS public.users
         ON DELETE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS public.transaction
+CREATE TABLE IF NOT EXISTS public.transactions
 (
     id_transaction bigint NOT NULL,
     create_date timestamp(6) without time zone NOT NULL,
     moviment_date timestamp(6) without time zone NOT NULL,
-    value numeric(38,2) NOT NULL,
+    transaction_value numeric(38,2) NOT NULL,
     user_payee bigint NOT NULL,
     user_payer bigint NOT NULL,
     CONSTRAINT transaction_pkey PRIMARY KEY (id_transaction),
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS public.notification
     user_email character varying(255) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT notification_pkey PRIMARY KEY (id_notification),
     CONSTRAINT fksv3vf7lbkpuxbsbx6lqsmsk6y FOREIGN KEY (transaction)
-        REFERENCES public.transaction (id_transaction) MATCH SIMPLE
+        REFERENCES public.transactions (id_transaction) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );

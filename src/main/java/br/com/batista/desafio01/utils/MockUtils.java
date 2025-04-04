@@ -1,8 +1,10 @@
 package br.com.batista.desafio01.utils;
 
+import br.com.batista.desafio01.model.entities.Notification;
 import br.com.batista.desafio01.model.entities.Transaction;
 import br.com.batista.desafio01.model.entities.User;
 import br.com.batista.desafio01.model.entities.UserType;
+import br.com.batista.desafio01.model.enums.ENotification;
 import br.com.batista.desafio01.model.enums.EUserType;
 
 import java.math.BigDecimal;
@@ -43,5 +45,17 @@ public class MockUtils {
         transaction.setCreateDate(new Date());
 
         return  transaction;
+    }
+
+    public static Notification mockNotification(){
+        Notification notification = new Notification();
+        notification.setIdNotification(RandomicUtils.generateNumeric(2));
+        notification.setSent(true);
+        notification.setTitle(ENotification.TITLE.get());
+        notification.setMessage(ENotification.MESSAGE.get());
+        notification.setUserEmail(RandomicUtils.generateRandomEmail());
+        notification.setTransaction(mockTransaction());
+
+        return  notification;
     }
 }

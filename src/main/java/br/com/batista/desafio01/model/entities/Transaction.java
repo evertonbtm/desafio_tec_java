@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "Transaction", uniqueConstraints = {})
+@Table(name = "Transactions", uniqueConstraints = {})
 public class Transaction {
 
     @Id
@@ -16,7 +16,7 @@ public class Transaction {
     @Column(name = "idTransaction")
     private long idTransaction;
 
-    @Column(name = "value")
+    @Column(name = "transaction_value")
     @NotNull
     BigDecimal value;
 

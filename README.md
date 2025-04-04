@@ -2,7 +2,7 @@
 
 ## Proposta do Projeto
 
-Este projeto tem como objetivo demonstrar a implementação de uma API RESTful com Java utilizando o Spring Boot, Hibernate, e outras bibliotecas populares. A aplicação deve gerenciar usuarios e realizar transações entre o mesmos, e o envio de notificações(Mockadas) após o sucesso das operações.
+Este projeto tem como objetivo demonstrar a implementação de uma API RESTful com Java utilizando o Spring Boot, Hibernate, e outras bibliotecas populares. A aplicação deve gerenciar usuarios e realizar transações entre o mesmos, e tambem o envio de notificações(Mockadas) após o sucesso das operações.
 
 ## Bibliotecas Utilizadas
 
@@ -20,7 +20,7 @@ Este projeto tem como objetivo demonstrar a implementação de uma API RESTful c
 A estrutura do projeto segue a convenção padrão do Maven:
 
 - **src/main/java**: Contém o código-fonte da aplicação.
-  - **com.example.projeto**: Pacote principal da aplicação.
+  - **br.com.batista.main**: Pacote principal da aplicação.
     - **controller**: Contém as classes de controle da aplicação (endpoints REST).
     - **service**: Contém as classes de serviço, onde a lógica de negócios é implementada.
     - **repository**: Contém as interfaces de repositório para acesso ao banco de dados.
@@ -29,7 +29,7 @@ A estrutura do projeto segue a convenção padrão do Maven:
 - **src/main/resources**: Contém os recursos estáticos e arquivos de configuração.
   - **application.properties**: Arquivo de configuração principal do Spring Boot.
 - **src/test/java**: Contém os testes unitários.
-  - **com.example.projeto**: Pacote principal dos testes.
+  - **br.com.batista.test**: Pacote principal dos testes.
     - **controller**: Contém os testes das classes de controle.
     - **service**: Contém os testes das classes de serviço.
 - **integration_test**: Contém as coleções do Postman para testes de integração.
