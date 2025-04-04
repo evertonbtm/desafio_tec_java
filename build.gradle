@@ -53,12 +53,3 @@ tasks.named('test') {
 		showStandardStreams = true
 	}
 }
-
-// Configuração do plugin de verificação de dependências
-dependencyUpdates {
-	revision = 'release'
-	checkForGradleUpdate = true
-	outputFormatter = 'plain'
-	outputDir = 'build/dependencyUpdates'
-	reportfileName = 'report'
-}

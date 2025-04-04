@@ -77,10 +77,11 @@ public class NotificationService implements INotificationService {
             }else{
                 notifyQueue(transaction);
                 logger.info(messageService.getMessage("notify.message.error"));
+                throw new UnavailableException(Transaction.class, messageService.getMessage("notify.unavailable"));
             }
         } catch (Exception e){
             notifyQueue(transaction);
-            throw new UnavailableException(Transaction.class);
+            throw new UnavailableException(Transaction.class, messageService.getMessage("notify.unavailable"));
         }
 
     }

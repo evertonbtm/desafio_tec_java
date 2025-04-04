@@ -75,7 +75,6 @@ public class TransactionService implements ITransactionService {
         return transactionList.get(0);
     }
 
-    @Transactional
     @Override
     public Transaction processDTO(TransactionDTO transactionDTO) throws Exception {
 

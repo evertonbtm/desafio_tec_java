@@ -6,8 +6,8 @@ public class UnavailableException extends ApiInternalServerErrorException {
 
     private String code;
 
-    public UnavailableException(Class clazz){
-        super(clazz.getSimpleName() + " : falha ao consultar serviços, realize uma nova tentativa em breve");
+    public UnavailableException(Class clazz, String msg){
+        super(clazz.getSimpleName() + " : "+ msg);
     }
 
     public String getCode() {

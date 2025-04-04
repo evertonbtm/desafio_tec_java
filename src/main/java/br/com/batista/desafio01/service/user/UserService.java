@@ -8,6 +8,7 @@ import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.dto.user.UserSearchDTO;
 import br.com.batista.desafio01.model.entities.User;
+import br.com.batista.desafio01.model.entities.UserType;
 import br.com.batista.desafio01.repository.ITransactionRepository;
 import br.com.batista.desafio01.repository.IUserRepository;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
@@ -148,7 +149,7 @@ public class UserService implements IUserService {
         }
 
         if(user.getUserType() == null){
-            throw new UserTypeNotFoundException(User.class, "userType");
+            throw new UserTypeNotFoundException(UserType.class, "");
         }
     }
 

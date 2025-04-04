@@ -2,6 +2,7 @@ package br.com.batista.desafio01.controller;
 
 
 import br.com.batista.desafio01.configuration.message.MessageService;
+import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.base.BaseReturnDTO;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.entities.User;
@@ -11,6 +12,7 @@ import br.com.batista.desafio01.service.user.UserService;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
 import br.com.batista.desafio01.utils.MockUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +29,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -61,7 +67,6 @@ public class UserControllerTest {
     public void init(){
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         Mockito.mockitoSession().initMocks(this);
-
     }
 
     @Test
@@ -124,7 +129,6 @@ public class UserControllerTest {
         user.setEmail("user1teste.com");
         user.setDocument("94071312033");
 
-        System.out.println(objectMapper.writeValueAsString(user));
         mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
@@ -146,8 +150,10 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO(user);
 
         UserType userType = MockUtils.mockUserType();
-        when(userService.createUpdate(userDTO)).thenReturn(user);//
         when(userTypeService.findTypeUser()).thenReturn(userType);
+        when(userRepository.findListByDocumentOrEmail(user.getDocument(), user.getEmail())).thenReturn(List.of(user));
+
+        when(userService.createUpdate(userDTO)).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
                         .contentType(MediaType.APPLICATION_JSON)
