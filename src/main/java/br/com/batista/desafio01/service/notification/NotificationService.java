@@ -21,6 +21,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 
@@ -61,19 +62,21 @@ public class NotificationService implements INotificationService {
 
     @Override
     public void notify(Transaction transaction) throws Exception {
-        NotifyDTO notifyDTO;
-        AuthorizeDTO mockParams = new AuthorizeDTO();
+        AuthorizeDTO params = new AuthorizeDTO();
         long seconds = Instant.now().getEpochSecond();
+        //aleatoridade para simular indisponibilidade.
         String result = (seconds % 2 == 0) ? "error" : "success";
-        mockParams.setStatus(result);
+        params.setStatus(result);
 
         try {
             // mock api
-             notifyDTO = callNotificationApi(mockParams).block();
-            if(notifyDTO != null  && notifyDTO.getStatus().equals("success")){
+            NotifyDTO notifyDTO = callNotificationApi(params).block();
+            if(notifyDTO != null && notifyDTO.getStatus().equals("success")){
+                saveNotification(transaction, true);
                 logger.info(messageService.getMessage("notify.message.success"));
             }else{
                 notifyQueue(transaction);
+                logger.info(messageService.getMessage("notify.message.error"));
             }
         } catch (Exception e){
             notifyQueue(transaction);
@@ -82,8 +85,27 @@ public class NotificationService implements INotificationService {
 
     }
 
+    private void saveNotification(Transaction transaction, boolean isSent) throws Exception {
+        var notification = findByTransaction(transaction.getIdTransaction());
 
-    public Notification findByTransaction(long idTransation) throws Exception {
+        if(notification == null){
+            notification = new Notification();
+            notification.setUserEmail(transaction.getPayee().getEmail());
+            notification.setSent(isSent);
+        }
+
+        notification.setCreateDate(new Date());
+        notification.setTitle(ENotification.TITLE.get());
+        notification.setMessage(ENotification.MESSAGE.get()
+                .replace("{0}",String.valueOf(transaction.getValue()))
+                .replace("{1}", transaction.getPayer().getDocument()));
+
+        notification.setTransaction(transaction);
+
+        save(notification);
+    }
+
+    public Notification findByTransaction(long idTransation) {
         List<Notification> notificationList = notificationRepository.findListByTransactionId(idTransation);
 
         if(notificationList == null || notificationList.isEmpty()){
@@ -98,23 +120,7 @@ public class NotificationService implements INotificationService {
     }
 
     private void notifyQueue(Transaction transaction) throws Exception {
-
-        Notification notification = findByTransaction(transaction.getIdTransaction());
-
-        if(notification == null){
-            notification = new Notification();
-            notification.setUserEmail(transaction.getPayee().getEmail());
-            notification.setSent(false);
-        }
-
-        notification.setTitle(ENotification.TITLE.get());
-        notification.setMessage(ENotification.MESSAGE.get()
-                    .replace("{0}",String.valueOf(transaction.getValue()))
-                    .replace("{1}", transaction.getPayer().getDocument()));
-
-        notification.setTransaction(transaction);
-
-        save(notification);
+        saveNotification(transaction, false);
     }
 
     @Scheduled(fixedRate = 60000)
@@ -127,12 +133,12 @@ public class NotificationService implements INotificationService {
             return;
         }
 
-        notificationList.forEach(this::sendNotification);
+        notificationList.forEach(this::setNotificationSended);
     }
 
-    private void sendNotification(Notification notification) {
-        logger.info(messageService.getMessage("notify.message.success"));
+    private void setNotificationSended(Notification notification) {
         notification.setSent(true);
         save(notification);
+        logger.info(messageService.getMessage("notify.message.success"));
     }
 }

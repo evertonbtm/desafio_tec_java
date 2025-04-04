@@ -79,7 +79,7 @@ public class TransactionService implements ITransactionService {
     @Override
     public Transaction processDTO(TransactionDTO transactionDTO) throws Exception {
 
-        Transaction transaction = new Transaction();
+        var transaction = new Transaction();
 
         transaction.setValue(transactionDTO.getValue());
         transaction.setCreateDate((transactionDTO.getCreateDate() == null ? new Date() : transactionDTO.getCreateDate()));
@@ -101,7 +101,7 @@ public class TransactionService implements ITransactionService {
     }
 
     private void validatePayerUser(Transaction transaction, TransactionDTO transactionDTO) throws Exception {
-        User payer = userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer());
+        var payer = userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer());
 
         if(payer == null){
             throw new UserNotFoundException(User.class, "document or email", transactionDTO.getPayer());
@@ -111,7 +111,7 @@ public class TransactionService implements ITransactionService {
     }
 
     private void validatePayeeUser(Transaction transaction, TransactionDTO transactionDTO) throws Exception {
-        User payer = userService.findByDocumentOrEmail(transactionDTO.getPayee(), transactionDTO.getPayee());
+        var payer = userService.findByDocumentOrEmail(transactionDTO.getPayee(), transactionDTO.getPayee());
 
         if(payer == null){
             throw new UserNotFoundException(User.class, "document or email", transactionDTO.getPayer());
@@ -121,8 +121,7 @@ public class TransactionService implements ITransactionService {
     }
 
     private void  validatePayerBalance(Transaction transaction){
-
-        User payer = transaction.getPayer();
+        var payer = transaction.getPayer();
         if(payer.getMoneyBalance().compareTo(transaction.getValue()) < 0){
             throw new InsuficientBalanceException(User.class,"moneyBalance", payer.getMoneyBalance().toPlainString());
         }
@@ -130,7 +129,7 @@ public class TransactionService implements ITransactionService {
     }
 
     private void calculatePayerBalance(Transaction transaction) throws Exception {
-        User payer = transaction.getPayer();
+        var payer = transaction.getPayer();
 
         BigDecimal userBalance = payer.getMoneyBalance();
 
@@ -142,7 +141,7 @@ public class TransactionService implements ITransactionService {
     }
 
     private void calculatePayeeBalance(Transaction transaction) throws Exception {
-        User payee = transaction.getPayee();
+        var payee = transaction.getPayee();
 
         BigDecimal userBalance = payee.getMoneyBalance();
 

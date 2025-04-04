@@ -25,14 +25,13 @@ A estrutura do projeto segue a convenção padrão do Maven:
     - **service**: Contém as classes de serviço, onde a lógica de negócios é implementada.
     - **repository**: Contém as interfaces de repositório para acesso ao banco de dados.
     - **model**: Contém as classes de modelo que representam as entidades do banco de dados.
-    - **config**: Contém as classes de configuração da aplicação.
+    - **configuration**: Contém as classes de configuração da aplicação.
 - **src/main/resources**: Contém os recursos estáticos e arquivos de configuração.
   - **application.properties**: Arquivo de configuração principal do Spring Boot.
-- **src/test/java**: Contém os testes unitários e de integração.
+- **src/test/java**: Contém os testes unitários.
   - **com.example.projeto**: Pacote principal dos testes.
     - **controller**: Contém os testes das classes de controle.
     - **service**: Contém os testes das classes de serviço.
-    - **repository**: Contém os testes das interfaces de repositório.
 - **integration_test**: Contém as coleções do Postman para testes de integração.
 
 ## Configurações e Detalhes de Execução
@@ -52,7 +51,7 @@ A estrutura do projeto segue a convenção padrão do Maven:
 
 2. Configure as credenciais do banco de dados no arquivo `application.properties`:
    ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/database
+   spring.datasource.url=jdbc:postgresql://localhost:5432/desafio_tecnico_java
    spring.datasource.username=seu_usuario
    spring.datasource.password=sua_senha
    ```

@@ -1,4 +1,4 @@
-package br.com.batista.desafio01.service;
+package br.com.batista.desafio01.service.transaction;
 
 
 
@@ -10,7 +10,6 @@ import br.com.batista.desafio01.model.entities.User;
 import br.com.batista.desafio01.repository.ITransactionRepository;
 
 import br.com.batista.desafio01.service.notification.INotificationService;
-import br.com.batista.desafio01.service.transaction.TransactionService;
 import br.com.batista.desafio01.service.user.IUserService;
 import br.com.batista.desafio01.utils.MockUtils;
 import org.junit.jupiter.api.BeforeEach;

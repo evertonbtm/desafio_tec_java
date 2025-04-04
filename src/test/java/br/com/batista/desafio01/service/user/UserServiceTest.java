@@ -1,4 +1,4 @@
-package br.com.batista.desafio01.service;
+package br.com.batista.desafio01.service.user;
 
 
 import br.com.batista.desafio01.exception.FieldDuplicatedException;
@@ -8,7 +8,6 @@ import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.entities.User;
 import br.com.batista.desafio01.model.entities.UserType;
 import br.com.batista.desafio01.repository.IUserRepository;
-import br.com.batista.desafio01.service.user.UserService;
 import br.com.batista.desafio01.service.usertype.UserTypeService;
 import br.com.batista.desafio01.utils.MockUtils;
 import org.junit.jupiter.api.BeforeEach;

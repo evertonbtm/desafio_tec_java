@@ -40,6 +40,7 @@ public class UserController {
     public ResponseEntity<UserDTO> create(@Schema(description = "user.controller.create.hint")  @Valid @RequestBody UserDTO userDTO) throws Exception {
         return ResponseEntity.status(HttpStatus.OK).body(new UserDTO(userService.createUpdate(userDTO)));
     }
+
     @DeleteMapping
     @Operation(
             summary = "user.controller.delete.hint"
