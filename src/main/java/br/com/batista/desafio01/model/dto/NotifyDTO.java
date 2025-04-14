@@ -5,6 +5,12 @@ public class NotifyDTO {
     String status;
     String message;
 
+    public NotifyDTO(String status, String message) {
+        this.status = status;
+        this.message = message;
+
+    }
+
     public String getStatus() {
         return status;
     }
