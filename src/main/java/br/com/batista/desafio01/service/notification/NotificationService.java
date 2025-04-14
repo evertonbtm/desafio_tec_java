@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -124,6 +125,7 @@ public class NotificationService implements INotificationService {
         saveNotification(transaction, false);
     }
 
+    @Async
     @Scheduled(fixedRate = 60000)
     public void notificationSchedule() throws Exception {
         logger.debug(messageService.getMessage("notify.message.schedule"));
