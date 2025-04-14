@@ -9,7 +9,7 @@ import java.util.Locale;
 @Service
 public class MessageService {
 
-    Locale defaultLocale = LocaleContextHolder.getLocale();
+    Locale defaultLocale = Locale.US;
 
     private final MessageSource messageSource;
 
