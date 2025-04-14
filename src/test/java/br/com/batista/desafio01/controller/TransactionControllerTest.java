@@ -4,18 +4,13 @@ package br.com.batista.desafio01.controller;
 import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.model.dto.NotifyDTO;
 import br.com.batista.desafio01.model.dto.TransactionDTO;
-import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.entities.Notification;
 import br.com.batista.desafio01.model.entities.Transaction;
 import br.com.batista.desafio01.model.entities.User;
-import br.com.batista.desafio01.model.entities.UserType;
-import br.com.batista.desafio01.model.enums.EUserType;
 import br.com.batista.desafio01.repository.INotificationRepository;
 import br.com.batista.desafio01.repository.ITransactionRepository;
 import br.com.batista.desafio01.repository.IUserRepository;
-import br.com.batista.desafio01.repository.IUserTypeRepository;
 import br.com.batista.desafio01.service.notification.INotificationService;
-import br.com.batista.desafio01.service.notification.NotificationService;
 import br.com.batista.desafio01.service.transaction.TransactionService;
 import br.com.batista.desafio01.service.user.IUserService;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
@@ -79,7 +74,7 @@ public class TransactionControllerTest {
     @Mock
     private IUserRepository userRepository;
 
-    @Mock
+    @MockitoBean(answers = Answers.RETURNS_DEEP_STUBS)
     private INotificationService notificationService;
 
     @MockitoBean(answers = Answers.RETURNS_DEEP_STUBS)
