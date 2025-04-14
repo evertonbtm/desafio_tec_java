@@ -52,7 +52,7 @@ public class NotificationService implements INotificationService {
         return notificationRepository.save(notification);
     }
 
-    private Mono<NotifyDTO> callNotificationApi(AuthorizeDTO params) {
+    public Mono<NotifyDTO> callNotificationApi(AuthorizeDTO params) {
         return webClient.post()
                 .uri("/posts")
                 .bodyValue(params)

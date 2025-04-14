@@ -2,6 +2,7 @@ package br.com.batista.desafio01.controller;
 
 
 import br.com.batista.desafio01.configuration.message.MessageService;
+import br.com.batista.desafio01.model.dto.NotifyDTO;
 import br.com.batista.desafio01.model.dto.TransactionDTO;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.entities.Notification;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,13 +43,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -179,6 +179,8 @@ public class TransactionControllerTest {
 
         when(transactionRepository.save(any())).thenReturn(transaction);
         when(notificationRepository.save(any())).thenReturn(notification);
+
+        when(notificationService.callNotificationApi(any())).thenReturn(Mono.just(new NotifyDTO("Success","Mocked!")));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/transactions/send")
                         .contentType(MediaType.APPLICATION_JSON)
