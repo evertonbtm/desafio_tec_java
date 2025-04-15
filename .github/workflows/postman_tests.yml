@@ -1,4 +1,4 @@
-name: Run Postman Tests
+name: CI - Spring Boot + Postman
 
 on:
   push:
@@ -7,12 +7,47 @@ on:
     branches: [ main ]
 
 jobs:
-  postman-test:
+  test-api:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: desafio_tecnico_java
+          POSTGRES_USER: seu_usuario
+          POSTGRES_PASSWORD: sua_senha
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build and start Spring Boot app
+        run: ./gradlew bootRun &
+      
+      - name: Wait for Spring Boot to be ready
+        run: |
+          echo "Waiting for app to start..."
+            until curl -s --head http://localhost:8080/swagger-ui.html | grep "200 OK"; do
+              echo "Waiting for Swagger UI to be available..."
+              sleep 5
+            done
 
       - name: Install Node.js
         uses: actions/setup-node@v3
