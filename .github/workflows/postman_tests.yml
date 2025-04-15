@@ -42,13 +42,19 @@ jobs:
         run: |
             ./gradlew bootRun > springboot.log 2>&1 &
       
-      - name: Wait for Spring Boot to be ready
+      - name: Wait for Swagger UI to be available
         run: |
-              echo "Waiting for app to start..."
-              until curl -s --head http://localhost:8080/swagger-ui/index.html | grep "200 OK"; do
-                echo "Waiting for Swagger UI to be available..."
-                sleep 5
-              done
+            echo "Waiting for Swagger UI to be available..."
+            for i in {1..30}; do
+              if curl -s --head http://localhost:8080/swagger-ui/index.html | grep "HTTP/2 200"; then
+                echo "Spring Boot is UP"
+                exit 0
+              fi
+              sleep 5
+            done
+            echo "App did not start. Printing logs..."
+            cat springboot.log
+            exit 1
 
       - name: Install Node.js
         uses: actions/setup-node@v3
