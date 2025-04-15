@@ -46,7 +46,7 @@ jobs:
         run: |
             echo "Waiting for Swagger UI to be available..."
             for i in {1..30}; do
-              if curl -s --head http://localhost:8080/swagger-ui.html | grep "200 OK"; then
+              if curl -s --head http://localhost:8080/swagger-ui/index.html | grep "200 OK"; then
                 echo "Spring Boot is UP"
                 exit 0
               fi
