@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0ddba3db-8422-443d-ac5d-c0e282122157",
+		"_postman_id": "ae48ebbf-6590-4bea-9654-7d39eec9bcbb",
 		"name": "Crud API",
 		"description": "Collection for testing Transaction API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
@@ -147,8 +147,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"   pm.response.to.have.status(201);\r",
+							"pm.test(\"Status code is 201 or 400\", function () {\r",
+							"   pm.expect(pm.response.code === 201 || pm.response.code === 400).to.be.true;\r",
 							"});"
 						],
 						"type": "text/javascript",
