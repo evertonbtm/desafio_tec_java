@@ -5,6 +5,9 @@ public class NotifyDTO {
     String status;
     String message;
 
+    public NotifyDTO() {
+    }
+
     public NotifyDTO(String status, String message) {
         this.status = status;
         this.message = message;
