@@ -41,19 +41,19 @@ public class NotificationServiceTest {
     @Mock
     private MessageService messageService;
 
-    @MockitoBean
+    @Mock
     private WebClient webClient;
 
-    @MockitoBean
+    @Mock
     private WebClient.RequestBodyUriSpec requestBodyUriSpec;
 
-    @MockitoBean
+    @Mock
     private WebClient.RequestBodySpec requestBodySpec;
 
-    @MockitoBean
+    @Mock
     private WebClient.RequestHeadersSpec requestHeadersSpec;
 
-    @MockitoBean
+    @Mock
     private WebClient.ResponseSpec responseSpec;
 
     @Value("${notify.api.url}")
@@ -61,7 +61,7 @@ public class NotificationServiceTest {
 
     @BeforeEach
     public void setUp() {
-        notificationService.init();
+      //  notificationService.init();
     }
 
     @Test
@@ -106,5 +106,47 @@ public class NotificationServiceTest {
         assertThrows(FieldDuplicatedException.class, () -> notificationService.findByTransaction(1L));
     }
 
+    @Test
+    public void when_CallNotificationApi_then_ReturnNotifyDTO() {
+        AuthorizeDTO authorizeDTO = new AuthorizeDTO();
+        authorizeDTO.setStatus("success");
+
+        NotifyDTO notifyDTO = new NotifyDTO();
+        notifyDTO.setStatus("success");
+
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri("/posts")).thenReturn(requestBodySpec);
+        when(requestBodySpec.bodyValue(authorizeDTO)).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(NotifyDTO.class)).thenReturn(Mono.just(notifyDTO));
+
+        Mono<NotifyDTO> result = notificationService.callNotificationApi(authorizeDTO);
+
+        assertNotNull(result);
+        assertEquals("success", result.block().getStatus());
+    }
+
+    @Test
+    public void when_NotificationSchedule_then_ProcessUnsentNotifications() throws Exception {
+        Notification unsentNotification = new Notification();
+        unsentNotification.setSent(false);
+
+        when(notificationRepository.findListBySent(false)).thenReturn(List.of(unsentNotification));
+        when(notificationRepository.save(any(Notification.class))).thenReturn(unsentNotification);
+
+        notificationService.notificationSchedule();
+
+        verify(notificationRepository, times(1)).save(unsentNotification);
+        assertTrue(unsentNotification.isSent());
+    }
+
+    @Test
+    public void when_NotificationSchedule_WithNoUnsentNotifications_then_DoNothing() throws Exception {
+        when(notificationRepository.findListBySent(false)).thenReturn(List.of());
+
+        notificationService.notificationSchedule();
+
+        verify(notificationRepository, never()).save(any(Notification.class));
+    }
 
 }
