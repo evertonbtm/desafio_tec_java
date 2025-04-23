@@ -10,9 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class Desafio01Application {
 
-	@Autowired
-	JwtAuthUtil jwtAuthUtil;
-
 	public static void main(String[] args) {
 		SpringApplication.run(Desafio01Application.class, args);
 	}

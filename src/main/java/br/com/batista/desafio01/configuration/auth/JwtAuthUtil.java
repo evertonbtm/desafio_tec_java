@@ -7,11 +7,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.security.Key;
 import java.util.Date;
@@ -48,7 +45,6 @@ public class JwtAuthUtil {
         return extractUsername(token).equals(userDetails.getUsername());
     }
 
-    // Validate a JWT token and return the username
     public static String validateToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()

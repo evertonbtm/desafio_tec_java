@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
+
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired

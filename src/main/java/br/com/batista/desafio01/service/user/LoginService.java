@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class LoginService implements UserDetailsService {
 
     @Autowired
-    IUserRepository userRepository;
+    private IUserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {

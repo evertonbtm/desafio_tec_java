@@ -15,7 +15,6 @@ public class UserTypeService implements IUserTypeService {
     @Autowired
     IUserTypeRepository userTypeRepository;
 
-
     @Override
     public UserType save(UserType UserType){
         return userTypeRepository.save(UserType);
