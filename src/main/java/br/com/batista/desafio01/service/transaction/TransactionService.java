@@ -25,13 +25,13 @@ public class TransactionService implements ITransactionService {
     private final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     @Autowired
-    ITransactionRepository transactionRepository;
+    private ITransactionRepository transactionRepository;
 
     @Autowired
-    IUserService userService;
+    private IUserService userService;
 
     @Autowired
-    INotificationService notificationService;
+    private INotificationService notificationService;
 
     @Override
     public TransactionDTO toDTO(Transaction entity){

@@ -2,6 +2,7 @@ package br.com.batista.desafio01.controller;
 
 import br.com.batista.desafio01.model.dto.TransactionDTO;
 import br.com.batista.desafio01.service.transaction.ITransactionService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/transactions")
+@SecurityRequirement(name = "bearerAuth")
 @Validated
 public class TransactionController {
 

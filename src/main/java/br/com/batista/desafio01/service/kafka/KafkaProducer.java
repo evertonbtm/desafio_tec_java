@@ -3,7 +3,7 @@ package br.com.batista.desafio01.service.kafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;

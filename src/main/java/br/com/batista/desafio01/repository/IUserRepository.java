@@ -15,4 +15,7 @@ public interface IUserRepository extends CrudRepository<User, Long>, JpaSpecific
     @Query("SELECT u FROM User AS u WHERE u.document = :document OR u.email = :email")
     List<User> findListByDocumentOrEmail(@Param("document") String document, @Param("email") String email);
 
+    @Query("SELECT u FROM User AS u WHERE u.name = :name")
+    User findUserByName(@Param("name") String name);
+
 }
