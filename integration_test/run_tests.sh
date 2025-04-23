@@ -1,0 +1,1 @@
+newman run CrudAPI.postman_collection.json --reporters cli,json,html --reporter-html-export report.html
