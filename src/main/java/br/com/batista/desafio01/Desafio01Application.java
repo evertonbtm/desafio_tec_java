@@ -1,5 +1,7 @@
 package br.com.batista.desafio01;
 
+import br.com.batista.desafio01.configuration.auth.JwtAuthUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -7,6 +9,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class Desafio01Application {
+
+	@Autowired
+	JwtAuthUtil jwtAuthUtil;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Desafio01Application.class, args);
