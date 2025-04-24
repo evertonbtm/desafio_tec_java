@@ -22,7 +22,9 @@ public interface IUserService {
 
     User findByDocumentOrEmail(String document, String email) throws Exception;
 
-    User createUpdate(UserDTO userDTO) throws Exception;
+    User create(UserDTO userDTO) throws Exception;
+
+    User update(UserDTO userDTO) throws Exception;
 
     void delete(String param) throws Exception;
 

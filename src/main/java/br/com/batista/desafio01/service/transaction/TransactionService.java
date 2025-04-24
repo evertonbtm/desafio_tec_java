@@ -136,7 +136,7 @@ public class TransactionService implements ITransactionService {
         payer.setMoneyBalance(newBalance);
 
         UserDTO userDTO = userService.toDTO(payer);
-        userService.createUpdate(userDTO);
+        userService.update(userDTO);
     }
 
     private void calculatePayeeBalance(Transaction transaction) throws Exception {
@@ -148,7 +148,7 @@ public class TransactionService implements ITransactionService {
         payee.setMoneyBalance(newBalance);
 
         UserDTO userDTO = userService.toDTO(payee);
-        userService.createUpdate(userDTO);
+        userService.update(userDTO);
     }
 
 }

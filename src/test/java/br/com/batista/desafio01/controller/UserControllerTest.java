@@ -29,9 +29,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -78,7 +80,7 @@ public class UserControllerTest {
         user.setEmail("user1@teste.com");
         user.setDocument("012345678910");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().is4xxClientError())
@@ -95,7 +97,7 @@ public class UserControllerTest {
         user.setEmail("user1@teste.com");
         user.setDocument("94071312033");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().is4xxClientError())
@@ -112,7 +114,7 @@ public class UserControllerTest {
         user.setEmail("user1@teste.com");
         user.setDocument("94071312033");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().is4xxClientError())
@@ -129,7 +131,7 @@ public class UserControllerTest {
         user.setEmail("user1teste.com");
         user.setDocument("94071312033");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().is4xxClientError())
@@ -151,15 +153,16 @@ public class UserControllerTest {
 
         UserType userType = MockUtils.mockUserType();
         when(userTypeService.findTypeUser()).thenReturn(userType);
-        when(userRepository.findListByDocumentOrEmail(user.getDocument(), user.getEmail())).thenReturn(List.of(user));
+        when(userRepository.findListByDocumentOrEmail(user.getDocument(), user.getEmail())).thenReturn(null);
 
-        when(userService.createUpdate(userDTO)).thenReturn(user);
+        when(userService.save(any())).thenReturn(user);
+        when(userService.create(userDTO)).thenReturn(user);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/create-update")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content(objectMapper.writeValueAsString(userDTO)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().string(objectMapper.writeValueAsString(userDTO)))
                 .andDo(print());
 

@@ -1,4 +1,4 @@
-package br.com.batista.desafio01.service.user;
+package br.com.batista.desafio01.service.auth;
 
 import br.com.batista.desafio01.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
