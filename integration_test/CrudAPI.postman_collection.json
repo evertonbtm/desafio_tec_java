@@ -8,13 +8,47 @@
 	},
 	"item": [
 		{
-			"name": "Create or Update User 1",
+			"name": "Create User 1",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							""
+							"function generateCPF() {\r",
+							"    function randomDigit() {\r",
+							"        return Math.floor(Math.random() * 9);\r",
+							"    }\r",
+							"\r",
+							"    let n = [];\r",
+							"    for (let i = 0; i < 9; i++) n.push(randomDigit());\r",
+							"\r",
+							"    function calcChecker(digits) {\r",
+							"        let sum = 0;\r",
+							"        for (let i = 0; i < digits.length; i++) {\r",
+							"            sum += digits[i] * ((digits.length + 1) - i);\r",
+							"        }\r",
+							"        let result = 11 - (sum % 11);\r",
+							"        return result > 9 ? 0 : result;\r",
+							"    }\r",
+							"\r",
+							"    n.push(calcChecker(n));\r",
+							"    n.push(calcChecker(n));\r",
+							"\r",
+							"    return n.join('');\r",
+							"}\r",
+							"\r",
+							"function generateRandomString(length) {\r",
+							"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+							"    let result = '';\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"user1_name\", generateRandomString(10));\r",
+							"pm.environment.set(\"user1_Cpf\", generateCPF());\r",
+							"pm.environment.set(\"user1_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -24,8 +58,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"   pm.response.to.have.status(200);\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"   pm.response.to.have.status(201);\r",
 							"});\r",
 							"\r",
 							"pm.test(\"Response should contain user document\", function () {\r",
@@ -35,7 +69,8 @@
 							"\r",
 							"pm.test(\"User email is correct\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.email).to.eql(\"user1@teste.com\");\r",
+							"    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+							"    pm.expect(jsonData.email).to.match(emailRegex);\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -56,20 +91,54 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"user1\",\n  \"password\": \"user123!@#\",\n  \"email\": \"user1@teste.com\",\n  \"document\": \"94071312033\",\n  \"moneyBalance\": 1000\n}"
+					"raw": "{\n  \"name\": \"{{user1_name}}\",\n  \"password\": \"user123!@#\",\n  \"email\": \"{{user1_email}}\",\n  \"document\": \"{{user1_Cpf}}\",\n  \"moneyBalance\": 1000\n}"
 				},
-				"url": "http://localhost:8080/users/create-update"
+				"url": "http://localhost:8080/users/create"
 			},
 			"response": []
 		},
 		{
-			"name": "Create or Update User 2",
+			"name": "Create User 2",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							""
+							"function generateCPF() {\r",
+							"    function randomDigit() {\r",
+							"        return Math.floor(Math.random() * 9);\r",
+							"    }\r",
+							"\r",
+							"    let n = [];\r",
+							"    for (let i = 0; i < 9; i++) n.push(randomDigit());\r",
+							"\r",
+							"    function calcChecker(digits) {\r",
+							"        let sum = 0;\r",
+							"        for (let i = 0; i < digits.length; i++) {\r",
+							"            sum += digits[i] * ((digits.length + 1) - i);\r",
+							"        }\r",
+							"        let result = 11 - (sum % 11);\r",
+							"        return result > 9 ? 0 : result;\r",
+							"    }\r",
+							"\r",
+							"    n.push(calcChecker(n));\r",
+							"    n.push(calcChecker(n));\r",
+							"\r",
+							"    return n.join('');\r",
+							"}\r",
+							"\r",
+							"function generateRandomString(length) {\r",
+							"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+							"    let result = '';\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"user2_name\", generateRandomString(10));\r",
+							"pm.environment.set(\"user2_Cpf\", generateCPF());\r",
+							"pm.environment.set(\"user2_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -79,8 +148,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"   pm.response.to.have.status(200);\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"   pm.response.to.have.status(201);\r",
 							"});\r",
 							"\r",
 							"pm.test(\"Response should contain user document\", function () {\r",
@@ -90,7 +159,8 @@
 							"\r",
 							"pm.test(\"User email is correct\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.email).to.eql(\"user2@teste.com\");\r",
+							"    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+							"    pm.expect(jsonData.email).to.match(emailRegex);\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -111,9 +181,9 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"user2\",\n  \"password\": \"user123!@#\",\n  \"email\": \"user2@teste.com\",\n  \"document\": \"94071312030\",\n  \"moneyBalance\": 1000\n}"
+					"raw": "{\n  \"name\": \"{{user2_name}}\",\n  \"password\": \"user123!@#\",\n  \"email\": \"{{user2_email}}\",\n  \"document\": \"{{user2_Cpf}}\",\n  \"moneyBalance\": 1000\n}"
 				},
-				"url": "http://localhost:8080/users/create-update"
+				"url": "http://localhost:8080/users/create"
 			},
 			"response": []
 		},
@@ -151,6 +221,9 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -160,7 +233,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"user1\",\n  \"password\": \"user123!@#\"\n}"
+					"raw": "{\n  \"username\": \"{{user1_name}}\",\n  \"password\": \"user123!@#\"\n}"
 				},
 				"url": "http://localhost:8080/login"
 			},
@@ -233,7 +306,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"value\": 10,\n  \"payee\": \"user1@teste.com\",\n  \"payer\": \"user2@teste.com\"\n}"
+					"raw": "{\n  \"value\": 10,\n  \"payee\": \"{{user1_email}}\",\n  \"payer\": \"{{user2_email}}\"\n}"
 				},
 				"url": "http://localhost:8080/transactions/send"
 			},
@@ -281,7 +354,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"value\": -1,\n  \"payee\": \"user1\",\n  \"payer\": \"user2\"\n}"
+					"raw": "{\n  \"value\": -1,\n  \"payee\": \"{{user1_email}}\",\n  \"payer\": \"{{user2_email}}\"\n}"
 				},
 				"url": "http://localhost:8080/transactions/send"
 			},
@@ -329,7 +402,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"value\": null,\n  \"payee\": \"user1\",\n  \"payer\": \"user2\"\n}"
+					"raw": "{\n  \"value\": null,\n  \"payee\": \"{{user1_email}}\",\n  \"payer\": \"{{user2_email}}\"\n}"
 				},
 				"url": "http://localhost:8080/transactions/send"
 			},
@@ -371,7 +444,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/users?param=94071312033",
+					"raw": "http://localhost:8080/users?param={{user1_Cpf}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -383,7 +456,7 @@
 					"query": [
 						{
 							"key": "param",
-							"value": "94071312033"
+							"value": "{{user1_Cpf}}"
 						}
 					]
 				}
@@ -426,7 +499,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/users?param=94071312030",
+					"raw": "http://localhost:8080/users?param={{user2_Cpf}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -438,7 +511,7 @@
 					"query": [
 						{
 							"key": "param",
-							"value": "94071312030"
+							"value": "{{user2_Cpf}}"
 						}
 					]
 				}
