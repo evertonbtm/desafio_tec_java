@@ -63,7 +63,7 @@ class UserServiceTest {
 
         when(IUserRepository.save(Mockito.any(User.class))).thenReturn(user);
 
-        User found = userService.createUpdate(userDTO);
+        User found = userService.create(userDTO);
 
         assertEquals(found.getName(), user.getName());
 
@@ -83,7 +83,7 @@ class UserServiceTest {
 
         when(IUserRepository.save(Mockito.any(User.class))).thenReturn(new User());
 
-        User found = userService.createUpdate(userDTO);
+        User found = userService.create(userDTO);
 
         assertNotEquals(found.getName(), userDTO.getName());
 
@@ -117,7 +117,7 @@ class UserServiceTest {
 
         when(IUserRepository.save(Mockito.any(User.class))).thenReturn(new User());
 
-        User found = userService.createUpdate(userDTO);
+        User found = userService.create(userDTO);
 
         String paramDelete = userDTO.getDocument();
 
@@ -144,7 +144,7 @@ class UserServiceTest {
 
         when(IUserRepository.findListByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail())).thenReturn(duplicatedList);
 
-        assertThrows(FieldDuplicatedException.class, () -> userService.createUpdate(userDTO));
+        assertThrows(FieldDuplicatedException.class, () -> userService.create(userDTO));
 
     }
 
@@ -164,7 +164,7 @@ class UserServiceTest {
 
         when(IUserRepository.save(Mockito.any(User.class))).thenReturn(user);
 
-        User updatedUser = userService.createUpdate(userDTO);
+        User updatedUser = userService.create(userDTO);
 
         assertEquals(updatedUser.getName(), userDTO.getName());
         assertEquals(updatedUser.getEmail(), userDTO.getEmail());
@@ -178,7 +178,7 @@ class UserServiceTest {
         userDTO.setEmail("updatedUser@teste.com");
         userDTO.setDocument("012345678910");
 
-        assertThrows(UserTypeNotFoundException.class, () -> userService.createUpdate(userDTO));
+        assertThrows(UserTypeNotFoundException.class, () -> userService.create(userDTO));
     }
 
     @Test
@@ -211,7 +211,7 @@ class UserServiceTest {
         userDTO.setEmail("invalidEmail");
         userDTO.setDocument("012345678910");
 
-        assertThrows(Exception.class, () -> userService.createUpdate(userDTO));
+        assertThrows(Exception.class, () -> userService.create(userDTO));
     }
 
 }

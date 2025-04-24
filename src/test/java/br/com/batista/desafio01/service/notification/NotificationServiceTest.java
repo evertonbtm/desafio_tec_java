@@ -7,7 +7,6 @@ import br.com.batista.desafio01.model.dto.AuthorizeDTO;
 import br.com.batista.desafio01.model.dto.NotifyDTO;
 import br.com.batista.desafio01.model.entities.Notification;
 import br.com.batista.desafio01.model.entities.Transaction;
-import br.com.batista.desafio01.model.enums.ENotification;
 import br.com.batista.desafio01.repository.INotificationRepository;
 import br.com.batista.desafio01.utils.MockUtils;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,7 @@
 package br.com.batista.desafio01.service.user;
 
 import br.com.batista.desafio01.configuration.message.MessageService;
-import br.com.batista.desafio01.exception.FieldDuplicatedException;
-import br.com.batista.desafio01.exception.UserDeletedException;
-import br.com.batista.desafio01.exception.UserNotFoundException;
-import br.com.batista.desafio01.exception.UserTypeNotFoundException;
+import br.com.batista.desafio01.exception.*;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.dto.user.UserSearchDTO;
 import br.com.batista.desafio01.model.entities.User;
@@ -120,23 +117,35 @@ public class UserService implements IUserService {
 
 
     @Override
-    public User createUpdate(UserDTO userDTO) throws Exception {
-
+    public User create(UserDTO userDTO) throws Exception {
         var user = findByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail());
 
-        if(user == null){
-            user = new User();
-            user.setDocument(userDTO.getDocument());
-            user.setEmail(userDTO.getEmail());
+        if(user != null){
+            throw new UserAlreadyCreatedException(User.class, "document or email", user.getDocument());
         }
 
+        user = new User();
+        user.setDocument(userDTO.getDocument());
+        user.setEmail(userDTO.getEmail());
+
+        userSetFields(user, userDTO);
+        return save(user);
+    }
+
+    @Override
+    public User update(UserDTO userDTO) throws Exception {
+        var user = findByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail());
+
+        userSetFields(user, userDTO);
+        return save(user);
+    }
+
+    private void userSetFields(User user, UserDTO userDTO) throws Exception {
         user.setName(userDTO.getName());
         user.setPassword(userDTO.getPassword());
         user.setMoneyBalance(userDTO.getMoneyBalance() == null ? BigDecimal.ZERO : userDTO.getMoneyBalance());
 
         validateUserType(user);
-
-        return save(user);
     }
 
     private void validateUserType(User user) throws Exception {
