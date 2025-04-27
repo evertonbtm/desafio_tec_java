@@ -2,7 +2,7 @@
 
 ## Proposta do Projeto
 
-Este projeto tem como objetivo demonstrar a implementação de uma API RESTful com Java utilizando o Spring Boot, Hibernate, e outras bibliotecas populares. A aplicação deve gerenciar usuarios e realizar transações entre o mesmos, e tambem o envio de notificações(Mockadas) após o sucesso das operações.
+Este projeto tem como objetivo demonstrar a implementação de uma API RESTful com Java utilizando o Spring Boot, Hibernate, e outras bibliotecas populares. A aplicação deve gerenciar usuarios e realizar transações entre o mesmos, e tambem realizar o envio de notificações(Mockadas) após o sucesso das operações.
 
 ## Bibliotecas Utilizadas
 
@@ -88,5 +88,3 @@ newman run integration_test/CrudAPI.postman_collection.json -r cli,html
 ### Documentação da API
 
 A documentação da API pode ser acessada em `http://localhost:8080/swagger-ui.html` após iniciar a aplicação.
-
-`
