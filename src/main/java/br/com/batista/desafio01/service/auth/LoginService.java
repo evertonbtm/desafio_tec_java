@@ -1,5 +1,7 @@
 package br.com.batista.desafio01.service.auth;
 
+import br.com.batista.desafio01.configuration.message.MessageConfig;
+import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -14,8 +16,14 @@ import java.util.ArrayList;
 @Service
 public class LoginService implements UserDetailsService {
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
+
+    private final MessageService messageService;
+
+    public LoginService(IUserRepository userRepository, MessageService messageService) {
+        this.userRepository = userRepository;
+        this.messageService = messageService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -25,7 +33,8 @@ public class LoginService implements UserDetailsService {
         if (user != null) {
             return new User(user.getName(), new BCryptPasswordEncoder().encode(user.getPassword()), new ArrayList<>(0));
         }
-        throw new UsernameNotFoundException("User not found");
+
+        throw new UsernameNotFoundException(messageService.getMessage("user.notfound"));
     }
 
 }

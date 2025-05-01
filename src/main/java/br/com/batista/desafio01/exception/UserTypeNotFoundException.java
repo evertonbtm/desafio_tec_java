@@ -4,17 +4,8 @@ import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
 
 public class UserTypeNotFoundException extends ApiInternalServerErrorException {
 
-    private String code;
-
     public UserTypeNotFoundException(Class clazz, String field){
         super(clazz.getSimpleName() + " not found "+ field );
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 }

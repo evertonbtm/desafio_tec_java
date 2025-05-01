@@ -13,7 +13,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,19 +24,21 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-
 @Service
 public class NotificationService implements INotificationService {
 
     private final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    private  WebClient webClient;
+    private WebClient webClient;
 
-    @Autowired
-    private INotificationRepository notificationRepository;
+    private final INotificationRepository notificationRepository;
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
+
+    public NotificationService(INotificationRepository notificationRepository, MessageService messageService) {
+        this.notificationRepository = notificationRepository;
+        this.messageService = messageService;
+    }
 
     @Value("${notify.api.url}")
     private String apiUrl;
@@ -74,10 +75,10 @@ public class NotificationService implements INotificationService {
             NotifyDTO notifyDTO = callNotificationApi(params).block();
             if(notifyDTO != null && notifyDTO.getStatus().equals("success")){
                 saveNotification(transaction, true);
-                logger.info(messageService.getMessage("notify.message.success"));
+                logger.debug(messageService.getMessage("notify.message.success"));
             }else{
                 notifyQueue(transaction);
-                logger.info(messageService.getMessage("notify.message.error"));
+                logger.debug(messageService.getMessage("notify.message.error"));
                 throw new UnavailableException(Transaction.class, messageService.getMessage("notify.unavailable"));
             }
         } catch (Exception e){
@@ -87,7 +88,7 @@ public class NotificationService implements INotificationService {
 
     }
 
-    private void saveNotification(Transaction transaction, boolean isSent) throws Exception {
+    private void saveNotification(Transaction transaction, boolean isSent) {
         var notification = findByTransaction(transaction.getIdTransaction());
 
         if(notification == null){
@@ -121,13 +122,13 @@ public class NotificationService implements INotificationService {
         return notificationList.get(0);
     }
 
-    private void notifyQueue(Transaction transaction) throws Exception {
+    private void notifyQueue(Transaction transaction) {
         saveNotification(transaction, false);
     }
 
     @Async
     @Scheduled(fixedRate = 60000)
-    public void notificationSchedule() throws Exception {
+    public void notificationSchedule() {
         logger.debug(messageService.getMessage("notify.message.schedule"));
 
         List<Notification> notificationList = notificationRepository.findListBySent(false);
@@ -142,6 +143,6 @@ public class NotificationService implements INotificationService {
     private void setNotificationSended(Notification notification) {
         notification.setSent(true);
         save(notification);
-        logger.info(messageService.getMessage("notify.message.success"));
+        logger.debug(messageService.getMessage("notify.message.success"));
     }
 }

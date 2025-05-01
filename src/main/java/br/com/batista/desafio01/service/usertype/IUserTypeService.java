@@ -1,15 +1,16 @@
 package br.com.batista.desafio01.service.usertype;
 
+import br.com.batista.desafio01.exception.FieldDuplicatedException;
 import br.com.batista.desafio01.model.entities.UserType;
 
 public interface IUserTypeService {
 
-    UserType save(UserType UserType);
+    UserType save(UserType userType);
 
-    UserType findByType(String type) throws Exception;
+    UserType findByType(String type) throws FieldDuplicatedException;
 
-    UserType findTypeShopkeeper() throws Exception;
+    UserType findTypeShopkeeper() throws FieldDuplicatedException;
 
-    UserType findTypeUser() throws Exception;
+    UserType findTypeUser() throws FieldDuplicatedException;
 
 }

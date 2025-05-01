@@ -4,17 +4,7 @@ import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
 
 public class UserAlreadyCreatedException extends ApiInternalServerErrorException {
 
-    private String code;
-
     public UserAlreadyCreatedException(Class clazz, String field, String code){
         super(clazz.getSimpleName() + " already created "+ field + " = "+code);
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 }
