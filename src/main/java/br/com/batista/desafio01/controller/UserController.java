@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,14 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class UserController {
 
-    @Autowired
-    private IUserService userService;
+    private final IUserService userService;
 
-    @Autowired
-    MessageService messageService;
+    private final MessageService messageService;
 
-    public UserController(){
-
+    public UserController(IUserService userService, MessageService messageService){
+        this.userService = userService;
+        this.messageService =messageService;
     }
 
     @PostMapping(path="create")
@@ -70,7 +68,7 @@ public class UserController {
     @Operation(
             summary = "user.controller.search.hint"
     )
-    public Page<UserDTO> get(@ParameterObject UserSearchDTO search, @ParameterObject Pageable pageable) throws Exception {
+    public Page<UserDTO> get(@ParameterObject UserSearchDTO search, @ParameterObject Pageable pageable) {
         return userService.search(search, pageable);
     }
 }

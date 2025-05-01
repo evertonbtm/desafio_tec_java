@@ -1,6 +1,6 @@
 package br.com.batista.desafio01.configuration.exception;
 
-
+import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,11 +20,22 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final MessageService messageService;
 
+    public GlobalExceptionHandler(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    
+    private static final String TIMESTAMP = "timestamp";
+    private static final String STATUS = "status";
+    private static final String ERROR = "error";
+    private static final String MESSAGE = "message";
+    private static final String ERRORS = "errors";
+    
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) throws JsonProcessingException {
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
         logger.error(ex.getMessage(), ex);
         StringBuilder message = new StringBuilder();
         ex.getConstraintViolations().forEach(violation ->
@@ -42,11 +53,11 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage()));
 
         Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "validation error");
-        response.put("message", "error");
-        response.put("errors", errors);
+        response.put(TIMESTAMP, LocalDateTime.now());
+        response.put(STATUS, HttpStatus.BAD_REQUEST.value());
+        response.put(ERROR, messageService.getMessage("internal.validation.error"));
+        response.put(MESSAGE, ERROR);
+        response.put(ERRORS, errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -54,14 +65,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiInternalServerErrorException.class)
     public ResponseEntity<Map<String, Object>> handleApiInternalServerErrorException(Exception ex) {
         logger.error(ex.getMessage(), ex);
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("ApiInternalServerError",ex.getMessage());
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "unexpected error");
-        response.put("message", "error");
-        response.put("errors", errors);
+        Map<String, Object> errors = new HashMap<>(0);
+        errors.put(messageService.getMessage("api.internal.server.error"),ex.getMessage());
+        Map<String, Object> response = new HashMap<>(0);
+
+        response.put(TIMESTAMP, LocalDateTime.now());
+        response.put(STATUS, HttpStatus.BAD_REQUEST.value());
+        response.put(ERROR, messageService.getMessage("internal.unexpected.error"));
+        response.put(MESSAGE, ERROR);
+        response.put(ERRORS, errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
@@ -70,14 +82,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
         logger.error(ex.getMessage(), ex);
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("error","Erro interno do servidor: " + ex.getMessage());
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "internal error");
-        response.put("message", "error");
-        response.put("errors", errors);
+        Map<String, Object> errors = new HashMap<>(0);
+        errors.put(ERROR, messageService.getMessage("internal.server.error", new String[]{ex.getMessage()}));
+        Map<String, Object> response = new HashMap<>(0);
+
+        response.put(TIMESTAMP, LocalDateTime.now());
+        response.put(STATUS, HttpStatus.BAD_REQUEST.value());
+        response.put(ERROR, messageService.getMessage("internal.error"));
+        response.put(MESSAGE, ERROR);
+        response.put(ERRORS, errors);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
@@ -86,14 +99,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
         logger.error(ex.getMessage(), ex);
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("error",ex.getMessage());
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "unexpected error");
-        response.put("message", "error");
-        response.put("errors", errors);
+        Map<String, Object> errors = new HashMap<>(0);
+        errors.put(ERROR,ex.getMessage());
+        Map<String, Object> response = new HashMap<>(0);
+
+        response.put(TIMESTAMP, LocalDateTime.now());
+        response.put(STATUS, HttpStatus.BAD_REQUEST.value());
+        response.put(ERROR, messageService.getMessage("internal.unexpected.error"));
+        response.put(MESSAGE, ERROR);
+        response.put(ERRORS, errors);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
