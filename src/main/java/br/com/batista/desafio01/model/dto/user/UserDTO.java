@@ -1,5 +1,6 @@
 package br.com.batista.desafio01.model.dto.user;
 
+import br.com.batista.desafio01.model.annotations.CpfOrCnpj;
 import br.com.batista.desafio01.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
@@ -24,7 +25,7 @@ public class UserDTO {
 
     @NotNull(message = "{user.dto.document.notnull}")
     @Size(min = 9, max = 14, message = "{user.dto.document.size}")
-    @Pattern(regexp = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})", message="{user.dto.document.valid}")
+    @CpfOrCnpj
     private String document;
 
     @NotNull(message = "{user.dto.email.notnull}")
