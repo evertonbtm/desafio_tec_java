@@ -4,7 +4,6 @@ import br.com.batista.desafio01.model.dto.TransactionDTO;
 import br.com.batista.desafio01.service.transaction.ITransactionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,12 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class TransactionController {
 
-    @Autowired
-    ITransactionService transactionService;
+    private final ITransactionService transactionService;
 
 
-    public TransactionController(){
-
+    public TransactionController(ITransactionService transactionService){
+        this.transactionService = transactionService;
     }
 
     @PostMapping(path="send")
