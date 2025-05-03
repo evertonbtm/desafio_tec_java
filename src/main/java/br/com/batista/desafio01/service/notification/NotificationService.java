@@ -63,7 +63,7 @@ public class NotificationService implements INotificationService {
 
 
     @Override
-    public void notify(Transaction transaction) throws Exception {
+    public void notify(Transaction transaction) throws UnavailableException {
         AuthorizeDTO params = new AuthorizeDTO();
         long seconds = Instant.now().getEpochSecond();
         //aleatoridade para simular indisponibilidade.
