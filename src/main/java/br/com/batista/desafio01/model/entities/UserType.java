@@ -22,11 +22,6 @@ public class UserType {
     @Column(name = "isActive")
     private boolean isActive;
 
-
-    public UserType(){
-        
-    }
-
     public long getIdUserType() {
         return idUserType;
     }

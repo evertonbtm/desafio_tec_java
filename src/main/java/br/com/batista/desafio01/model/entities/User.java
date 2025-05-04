@@ -65,10 +65,6 @@ public class User {
     @OneToMany(mappedBy = "payee")
     private List<Transaction> payeeTransactions;
 
-    public User(){
-
-    }
-
     public String getName() {
         return name;
     }
