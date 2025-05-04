@@ -1,9 +1,7 @@
 package br.com.batista.desafio01.service.auth;
 
-import br.com.batista.desafio01.configuration.message.MessageConfig;
 import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.repository.IUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

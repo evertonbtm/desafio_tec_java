@@ -9,29 +9,26 @@ import br.com.batista.desafio01.repository.ITransactionRepository;
 import br.com.batista.desafio01.service.notification.INotificationService;
 import br.com.batista.desafio01.service.user.IUserService;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionService implements ITransactionService {
 
-    private final Logger logger = LoggerFactory.getLogger(TransactionService.class);
+    private final ITransactionRepository transactionRepository;
 
-    @Autowired
-    private ITransactionRepository transactionRepository;
+    private final IUserService userService;
 
-    @Autowired
-    private IUserService userService;
+    private final INotificationService notificationService;
 
-    @Autowired
-    private INotificationService notificationService;
+    public TransactionService(ITransactionRepository transactionRepository, IUserService userService, INotificationService notificationService) {
+        this.transactionRepository = transactionRepository;
+        this.userService = userService;
+        this.notificationService = notificationService;
+    }
 
     @Override
     public TransactionDTO toDTO(Transaction entity){
@@ -40,7 +37,7 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public List<TransactionDTO> toDTO(List<Transaction> entityList){
-        return entityList.stream().map(TransactionDTO::new).collect(Collectors.toList());
+        return entityList.stream().map(TransactionDTO::new).toList();
     }
 
     @Override
@@ -76,7 +73,7 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Transaction processDTO(TransactionDTO transactionDTO) throws Exception {
+    public Transaction processDTO(TransactionDTO transactionDTO) {
 
         var transaction = new Transaction();
 
@@ -99,7 +96,7 @@ public class TransactionService implements ITransactionService {
         return response;
     }
 
-    private void validatePayerUser(Transaction transaction, TransactionDTO transactionDTO) throws Exception {
+    private void validatePayerUser(Transaction transaction, TransactionDTO transactionDTO) throws UserNotFoundException {
         var payer = userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer());
 
         if(payer == null){
@@ -109,7 +106,7 @@ public class TransactionService implements ITransactionService {
         transaction.setPayer(payer);
     }
 
-    private void validatePayeeUser(Transaction transaction, TransactionDTO transactionDTO) throws Exception {
+    private void validatePayeeUser(Transaction transaction, TransactionDTO transactionDTO) throws UserNotFoundException {
         var payer = userService.findByDocumentOrEmail(transactionDTO.getPayee(), transactionDTO.getPayee());
 
         if(payer == null){
@@ -119,15 +116,14 @@ public class TransactionService implements ITransactionService {
         transaction.setPayee(payer);
     }
 
-    private void  validatePayerBalance(Transaction transaction){
+    private void  validatePayerBalance(Transaction transaction) throws InsuficientBalanceException{
         var payer = transaction.getPayer();
         if(payer.getMoneyBalance().compareTo(transaction.getValue()) < 0){
             throw new InsuficientBalanceException(User.class,"moneyBalance", payer.getMoneyBalance().toPlainString());
         }
-
     }
 
-    private void calculatePayerBalance(Transaction transaction) throws Exception {
+    private void calculatePayerBalance(Transaction transaction){
         var payer = transaction.getPayer();
 
         BigDecimal userBalance = payer.getMoneyBalance();
@@ -139,7 +135,7 @@ public class TransactionService implements ITransactionService {
         userService.update(userDTO);
     }
 
-    private void calculatePayeeBalance(Transaction transaction) throws Exception {
+    private void calculatePayeeBalance(Transaction transaction){
         var payee = transaction.getPayee();
 
         BigDecimal userBalance = payee.getMoneyBalance();

@@ -42,12 +42,12 @@ class TransactionServiceTest {
     INotificationService notificationService;
 
     @BeforeEach
-    public void init(){
+    void init(){
         Mockito.mockitoSession().initMocks(this);
     }
 
     @Test
-    public void when_create_transaction_then_success() throws Exception {
+    void when_create_transaction_then_success() throws Exception {
 
         User payer = MockUtils.mockUser();
         User payee = MockUtils.mockUser();
@@ -69,7 +69,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    public void when_create_transaction_then_InsuficientBalanceException() throws Exception {
+    void when_create_transaction_then_InsuficientBalanceException() throws Exception {
 
         User payer = MockUtils.mockUser();
         payer.setMoneyBalance(BigDecimal.ZERO);
@@ -87,7 +87,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    public void when_create_transaction_with_invalid_payer_then_fail() throws Exception {
+    void when_create_transaction_with_invalid_payer_then_fail() throws Exception {
 
         User payer = null;
         User payee = MockUtils.mockUser();
@@ -97,13 +97,13 @@ class TransactionServiceTest {
         transactionDTO.setPayee(payee.getDocument());
         transactionDTO.setPayer("invalid_payer_document");
 
-        when(userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer())).thenReturn(payer);
+        //when(userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer())).thenReturn(payer);
 
         assertThrows(UserNotFoundException.class, () -> transactionService.processDTO(transactionDTO));
     }
 
     @Test
-    public void when_create_transaction_with_invalid_payee_then_fail() throws Exception {
+    void when_create_transaction_with_invalid_payee_then_fail() {
 
         User payer = MockUtils.mockUser();
         User payee = null;
@@ -113,14 +113,11 @@ class TransactionServiceTest {
         transactionDTO.setPayee("invalid_payee_document");
         transactionDTO.setPayer(payer.getDocument());
 
-        when(userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer())).thenReturn(payer);
-        when(userService.findByDocumentOrEmail(transactionDTO.getPayee(), transactionDTO.getPayee())).thenReturn(payee);
-
         assertThrows(UserNotFoundException.class, () -> transactionService.processDTO(transactionDTO));
     }
 
     @Test
-    public void when_create_transaction_with_null_transactionDTO_then_fail() {
+    void when_create_transaction_with_null_transactionDTO_then_fail() {
         assertThrows(NullPointerException.class, () -> transactionService.processDTO(null));
     }
 
