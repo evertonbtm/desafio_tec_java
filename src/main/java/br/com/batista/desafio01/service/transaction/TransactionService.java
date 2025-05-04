@@ -96,7 +96,7 @@ public class TransactionService implements ITransactionService {
         return response;
     }
 
-    private void validatePayerUser(Transaction transaction, TransactionDTO transactionDTO) throws UserNotFoundException {
+    private void validatePayerUser(Transaction transaction, TransactionDTO transactionDTO) throws FieldDuplicatedException, UserDeletedException  {
         var payer = userService.findByDocumentOrEmail(transactionDTO.getPayer(), transactionDTO.getPayer());
 
         if(payer == null){
@@ -106,7 +106,7 @@ public class TransactionService implements ITransactionService {
         transaction.setPayer(payer);
     }
 
-    private void validatePayeeUser(Transaction transaction, TransactionDTO transactionDTO) throws UserNotFoundException {
+    private void validatePayeeUser(Transaction transaction, TransactionDTO transactionDTO) throws FieldDuplicatedException, UserDeletedException {
         var payer = userService.findByDocumentOrEmail(transactionDTO.getPayee(), transactionDTO.getPayee());
 
         if(payer == null){
