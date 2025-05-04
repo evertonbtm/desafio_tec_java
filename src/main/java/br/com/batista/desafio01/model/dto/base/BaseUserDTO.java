@@ -1,6 +1,6 @@
 package br.com.batista.desafio01.model.dto.base;
 
-import jakarta.persistence.Column;
+import br.com.batista.desafio01.model.annotations.CpfOrCnpj;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -20,7 +20,7 @@ public abstract class BaseUserDTO {
 
     @NotNull(message = "O documento não pode ser nulo")
     @Size(min = 9, max = 14, message = "O documento deve ter entre 9 e 14 caracteres")
-    @Pattern(regexp = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})", message="CPF ou CPNJ invalido")
+    @CpfOrCnpj
     private String document;
 
     @NotNull(message = "O e-mail não pode ser nulo")

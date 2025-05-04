@@ -1,45 +1,33 @@
 package br.com.batista.desafio01.service.user;
 
-import br.com.batista.desafio01.configuration.message.MessageService;
 import br.com.batista.desafio01.exception.*;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.dto.user.UserSearchDTO;
 import br.com.batista.desafio01.model.entities.User;
 import br.com.batista.desafio01.model.entities.UserType;
-import br.com.batista.desafio01.repository.ITransactionRepository;
 import br.com.batista.desafio01.repository.IUserRepository;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
 import br.com.batista.desafio01.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final IUserRepository userRepository;
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserTypeService userTypeService;
 
-    @Autowired
-    private IUserTypeService userTypeService;
-
-    @Autowired
-    private ITransactionRepository transactionRepository;
-
-    @Autowired
-    private MessageService messageService;
+    public UserService(IUserRepository userRepository, IUserTypeService userTypeService) {
+        this.userRepository = userRepository;
+        this.userTypeService = userTypeService;
+    }
 
     @Override
     public UserDTO toDTO(User entity){
@@ -48,7 +36,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDTO> toDTO(List<User> entityList){
-        return entityList.stream().map(UserDTO::new).collect(Collectors.toList());
+        return entityList.stream().map(UserDTO::new).toList();
     }
 
     public Page<UserDTO> toDTO(Page<User> entityList){
@@ -73,7 +61,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void delete(String param) throws Exception {
+    public void delete(String param) throws UserNotFoundException {
         User user = findByDocumentOrEmail(param, param);
 
         if(user == null){
@@ -90,7 +78,7 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    public User findByDocumentOrEmail(String document, String email) throws Exception {
+    public User findByDocumentOrEmail(String document, String email) throws FieldDuplicatedException, UserDeletedException {
         List<User> userList = userRepository.findListByDocumentOrEmail(document, email);
 
         if(userList == null || userList.isEmpty()){
@@ -117,7 +105,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public User create(UserDTO userDTO) throws Exception {
+    public User create(UserDTO userDTO) throws UserAlreadyCreatedException {
         var user = findByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail());
 
         if(user != null){
@@ -133,14 +121,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User update(UserDTO userDTO) throws Exception {
+    public User update(UserDTO userDTO){
         var user = findByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail());
 
         userSetFields(user, userDTO);
         return save(user);
     }
 
-    private void userSetFields(User user, UserDTO userDTO) throws Exception {
+    private void userSetFields(User user, UserDTO userDTO) {
         user.setName(userDTO.getName());
         user.setPassword(userDTO.getPassword());
         user.setMoneyBalance(userDTO.getMoneyBalance() == null ? BigDecimal.ZERO : userDTO.getMoneyBalance());
@@ -148,14 +136,12 @@ public class UserService implements IUserService {
         validateUserType(user);
     }
 
-    private void validateUserType(User user) throws Exception {
+    private void validateUserType(User user) throws UserTypeNotFoundException {
         user.setUserType(userTypeService.findTypeUser());
 
         if(ValidationUtils.isValidCpfOrCnpj(user.getDocument())
                 && ValidationUtils.isValidCnpj(user.getDocument())){
-
             user.setUserType(userTypeService.findTypeShopkeeper());
-
         }
 
         if(user.getUserType() == null){
@@ -163,7 +149,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public User findById(long idUser) throws Exception {
+    public User findById(long idUser) throws UserNotFoundException {
         return userRepository.findById(idUser).orElseThrow(() -> new UserNotFoundException(User.class, "idUser", String.valueOf(idUser)));
     }
 

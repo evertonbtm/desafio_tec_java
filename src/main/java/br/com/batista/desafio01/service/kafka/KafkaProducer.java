@@ -1,10 +1,12 @@
 package br.com.batista.desafio01.service.kafka;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
 
-//@Service
 public class KafkaProducer {
+
+    private final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
@@ -14,6 +16,6 @@ public class KafkaProducer {
 
     public void sendMessage(String topic, String message) {
         kafkaTemplate.send(topic, message);
-        System.out.println("Sent message: " + message);
+        logger.debug("Sent message: ".concat(message));
     }
 }

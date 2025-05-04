@@ -4,7 +4,6 @@ import br.com.batista.desafio01.exception.FieldDuplicatedException;
 import br.com.batista.desafio01.model.entities.UserType;
 import br.com.batista.desafio01.model.enums.EUserType;
 import br.com.batista.desafio01.repository.IUserTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,36 +11,38 @@ import java.util.List;
 @Service
 public class UserTypeService implements IUserTypeService {
 
-    @Autowired
-    IUserTypeRepository userTypeRepository;
+    private final IUserTypeRepository userTypeRepository;
 
-    @Override
-    public UserType save(UserType UserType){
-        return userTypeRepository.save(UserType);
+    public UserTypeService(IUserTypeRepository userTypeRepository) {
+        this.userTypeRepository = userTypeRepository;
     }
 
     @Override
-    public UserType findByType(String type) throws Exception {
-        List<UserType> UserTypeList = userTypeRepository.findListByType(type);
+    public UserType save(UserType userType){
+        return userTypeRepository.save(userType);
+    }
 
-        if(UserTypeList == null || UserTypeList.isEmpty()){
+    @Override
+    public UserType findByType(String type) throws FieldDuplicatedException {
+        List<UserType> userTypeList = userTypeRepository.findListByType(type);
+
+        if(userTypeList == null || userTypeList.isEmpty()){
             return null;
         }
 
-        if(UserTypeList.size() > 1){
+        if(userTypeList.size() > 1){
             throw new FieldDuplicatedException(UserType.class, "type", type);
         }
 
-        return UserTypeList.get(0);
+        return userTypeList.get(0);
     }
 
-    public UserType findTypeShopkeeper() throws Exception {
+    public UserType findTypeShopkeeper() throws FieldDuplicatedException {
         return findByType(EUserType.SHOPKEEPER.get());
     }
 
-    public UserType findTypeUser() throws Exception {
+    public UserType findTypeUser() throws FieldDuplicatedException {
         return findByType(EUserType.USER.get());
     }
-
 
 }
