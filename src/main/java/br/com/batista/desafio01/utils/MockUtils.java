@@ -12,9 +12,10 @@ import java.util.Date;
 
 public class MockUtils {
 
+    private MockUtils(){}
+
     public static UserType mockUserType(){
         UserType userType = new UserType();
-        userType.setIdUserType(RandomicUtils.generateNumeric(2));
         userType.setIdUserType(RandomicUtils.generateNumeric(6));
         userType.setType(EUserType.USER.get());
         userType.setActive(true);

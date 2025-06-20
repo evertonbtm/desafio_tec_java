@@ -19,8 +19,8 @@ public class UserType {
     @NotBlank
     private String type;
 
-    @Column(name = "isActive")
-    private boolean isActive;
+    @Column(name = "isActive", nullable = false)
+    private boolean isActive = true; // Default to active
 
     public long getIdUserType() {
         return idUserType;

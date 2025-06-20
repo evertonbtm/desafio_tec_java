@@ -9,8 +9,4 @@ public interface IUserTypeService {
 
     UserType findByType(String type) throws FieldDuplicatedException;
 
-    UserType findTypeShopkeeper() throws FieldDuplicatedException;
-
-    UserType findTypeUser() throws FieldDuplicatedException;
-
 }

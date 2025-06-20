@@ -2,13 +2,14 @@ package br.com.batista.desafio01.service.user;
 
 
 import br.com.batista.desafio01.exception.FieldDuplicatedException;
+import br.com.batista.desafio01.exception.UserAlreadyCreatedException;
 import br.com.batista.desafio01.exception.UserNotFoundException;
 import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.entities.User;
 import br.com.batista.desafio01.model.entities.UserType;
 import br.com.batista.desafio01.repository.IUserRepository;
-import br.com.batista.desafio01.service.usertype.UserTypeService;
+import br.com.batista.desafio01.service.usertype.IUserTypeService;
 import br.com.batista.desafio01.utils.MockUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,21 +35,18 @@ class UserServiceTest {
     UserService userService;
 
     @Mock
-    UserTypeService userTypeService;
+    IUserTypeService userTypeService;
 
     @Mock
-    IUserRepository IUserRepository;
-
+    IUserRepository userRepository;
 
     @BeforeEach
-    public void init(){
-
-        Mockito.mockitoSession().initMocks(this);
+    void init(){
 
     }
 
     @Test
-    public void when_create_user_then_success() throws Exception {
+    void when_create_user_then_success() throws Exception {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
@@ -59,9 +57,9 @@ class UserServiceTest {
         User user = userService.toEntity(userDTO);
 
         UserType userType = MockUtils.mockUserType();
-        when(userTypeService.findTypeUser()).thenReturn(userType);
+        when(userTypeService.findByType("USER")).thenReturn(userType);
 
-        when(IUserRepository.save(Mockito.any(User.class))).thenReturn(user);
+        when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
         User found = userService.create(userDTO);
 
@@ -70,27 +68,22 @@ class UserServiceTest {
     }
 
     @Test
-    public void when_create_user_then_fail() throws Exception {
+    void when_create_user_then_fail() throws Exception {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
         userDTO.setPassword("user123!@#");
         userDTO.setEmail("user1@teste.com");
         userDTO.setDocument("012345678910");
+        // Simulate user already exists
+        when(userRepository.findListByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail()))
+            .thenReturn(Collections.singletonList(new User()));
 
-        UserType userType = MockUtils.mockUserType();
-        when(userTypeService.findTypeUser()).thenReturn(userType);
-
-        when(IUserRepository.save(Mockito.any(User.class))).thenReturn(new User());
-
-        User found = userService.create(userDTO);
-
-        assertNotEquals(found.getName(), userDTO.getName());
-
+        assertThrows(br.com.batista.desafio01.exception.UserAlreadyCreatedException.class, () -> userService.create(userDTO));
     }
 
     @Test
-    public void when_delete_user_then_userNotFoundException() throws Exception {
+    void when_delete_user_then_userNotFoundException() throws Exception {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
@@ -104,7 +97,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void when_delete_user_then_success() throws Exception {
+    void when_delete_user_then_success() throws Exception {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
@@ -113,22 +106,22 @@ class UserServiceTest {
         userDTO.setDocument("012345678910");
 
         UserType userType = MockUtils.mockUserType();
-        when(userTypeService.findTypeUser()).thenReturn(userType);
+        when(userTypeService.findByType("USER")).thenReturn(userType);
 
-        when(IUserRepository.save(Mockito.any(User.class))).thenReturn(new User());
+        when(userRepository.save(Mockito.any(User.class))).thenReturn(new User());
 
         User found = userService.create(userDTO);
 
         String paramDelete = userDTO.getDocument();
 
-        when(IUserRepository.findListByDocumentOrEmail(paramDelete, paramDelete))
+        when(userRepository.findListByDocumentOrEmail(paramDelete, paramDelete))
                 .thenReturn(Collections.singletonList(found));
 
         assertDoesNotThrow( () -> userService.delete(paramDelete));
     }
 
     @Test
-    public void when_create_user_then_return_FieldDuplicatedException() throws Exception {
+    void when_create_user_then_return_FieldDuplicatedException() throws Exception {
 
         List<User> duplicatedList= new ArrayList<>(0);
         UserDTO userDTO = new UserDTO();
@@ -142,14 +135,14 @@ class UserServiceTest {
         duplicatedList.add(user);
         duplicatedList.add(user);
 
-        when(IUserRepository.findListByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail())).thenReturn(duplicatedList);
+        when(userRepository.findListByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail())).thenReturn(duplicatedList);
 
         assertThrows(FieldDuplicatedException.class, () -> userService.create(userDTO));
 
     }
 
     @Test
-    public void when_update_user_then_success() throws Exception {
+    void when_update_user_then_success() throws Exception {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("updatedUser");
         userDTO.setPassword("updatedPassword123!@#");
@@ -160,9 +153,9 @@ class UserServiceTest {
         user.setIdUser(1L);
 
         UserType userType = MockUtils.mockUserType();
-        when(userTypeService.findTypeUser()).thenReturn(userType);
+        when(userTypeService.findByType("USER")).thenReturn(userType);
 
-        when(IUserRepository.save(Mockito.any(User.class))).thenReturn(user);
+        when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
         User updatedUser = userService.create(userDTO);
 
@@ -171,24 +164,26 @@ class UserServiceTest {
     }
 
     @Test
-    public void when_update_user_then_userNotFoundException() {
+    void when_update_user_then_userNotFoundException() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("updatedUser");
         userDTO.setPassword("updatedPassword123!@#");
         userDTO.setEmail("updatedUser@teste.com");
         userDTO.setDocument("012345678910");
 
+        // Not mocking userTypeService.findByType("USER") here on purpose,
+        // so it returns null and triggers UserTypeNotFoundException
         assertThrows(UserTypeNotFoundException.class, () -> userService.create(userDTO));
     }
 
     @Test
-    public void when_find_user_by_id_then_success() throws Exception {
+    void when_find_user_by_id_then_success() throws Exception {
         User user = new User();
         user.setIdUser(1L);
         user.setName("user1");
         user.setEmail("user1@teste.com");
 
-        when(IUserRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
 
         User foundUser = userService.findById(1L);
 
@@ -197,14 +192,14 @@ class UserServiceTest {
     }
 
     @Test
-    public void when_find_user_by_id_then_userNotFoundException() throws Exception {
-        when(IUserRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+    void when_find_user_by_id_then_userNotFoundException() throws Exception {
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> userService.findById(1L));
     }
 
     @Test
-    public void when_create_user_with_invalid_data_then_InvalidUserException() throws Exception {
+    void when_create_user_with_invalid_data_then_InvalidUserException() throws Exception {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("");
         userDTO.setPassword("short");
@@ -215,4 +210,3 @@ class UserServiceTest {
     }
 
 }
-

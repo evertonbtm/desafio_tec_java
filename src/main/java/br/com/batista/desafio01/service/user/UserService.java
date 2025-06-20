@@ -137,11 +137,11 @@ public class UserService implements IUserService {
     }
 
     private void validateUserType(User user) throws UserTypeNotFoundException {
-        user.setUserType(userTypeService.findTypeUser());
+        user.setUserType(userTypeService.findByType("USER"));
 
         if(ValidationUtils.isValidCpfOrCnpj(user.getDocument())
                 && ValidationUtils.isValidCnpj(user.getDocument())){
-            user.setUserType(userTypeService.findTypeShopkeeper());
+            user.setUserType(userTypeService.findByType("SHOPKEEPER"));
         }
 
         if(user.getUserType() == null){

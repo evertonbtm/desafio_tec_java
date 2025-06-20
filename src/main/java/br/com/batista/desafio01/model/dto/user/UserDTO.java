@@ -32,6 +32,7 @@ public class UserDTO {
     @Email(message = "{user.dto.email.valid}")
     private String email;
 
+    private String userType;
 
     BigDecimal moneyBalance;
 
@@ -58,6 +59,9 @@ public class UserDTO {
         }
         if(user.getMoneyBalance() != null) {
             this.setMoneyBalance(user.getMoneyBalance());
+        }
+        if(user.getUserType() != null){
+            this.setUserType(user.getUserType().getType());
         }
 
         this.setSendMoney(user.isSendMoney());
@@ -129,4 +133,11 @@ public class UserDTO {
         isSendMoney = sendMoney;
     }
 
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
 }
