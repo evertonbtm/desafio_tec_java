@@ -2,7 +2,6 @@ package br.com.batista.desafio01.controller;
 
 
 import br.com.batista.desafio01.configuration.message.MessageService;
-import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.base.BaseReturnDTO;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.entities.User;
@@ -12,7 +11,6 @@ import br.com.batista.desafio01.service.user.UserService;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
 import br.com.batista.desafio01.utils.MockUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,13 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -66,13 +59,13 @@ public class UserControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
-    public void init(){
+    void init(){
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         Mockito.mockitoSession().initMocks(this);
     }
 
     @Test
-    public void when_create_user_invalid_document_then_fail() throws Exception {
+    void when_create_user_invalid_document_then_fail() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setName("user1");
@@ -89,7 +82,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void when_create_user_invalid_name_then_fail() throws Exception {
+    void when_create_user_invalid_name_then_fail() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setName("");
@@ -106,7 +99,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void when_create_user_invalid_password_then_fail() throws Exception {
+    void when_create_user_invalid_password_then_fail() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setName("user1");
@@ -123,7 +116,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void when_create_user_invalid_email_then_fail() throws Exception {
+    void when_create_user_invalid_email_then_fail() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setName("user1");
@@ -141,7 +134,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void when_create_user_then_success() throws Exception {
+    void when_create_user_then_success() throws Exception {
 
         User user = MockUtils.mockUser();
         user.setName("user1");
@@ -152,7 +145,7 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO(user);
 
         UserType userType = MockUtils.mockUserType();
-        when(userTypeService.findTypeUser()).thenReturn(userType);
+        when(userTypeService.findByType("USER")).thenReturn(userType);
         when(userRepository.findListByDocumentOrEmail(user.getDocument(), user.getEmail())).thenReturn(null);
 
         when(userService.save(any())).thenReturn(user);
@@ -169,7 +162,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void when_delete_user_then_success() throws Exception {
+    void when_delete_user_then_success() throws Exception {
 
         User user = MockUtils.mockUser();
         user.setName("user1");

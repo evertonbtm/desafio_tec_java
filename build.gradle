@@ -52,7 +52,7 @@ dependencies {
 	}
 }
 
-/*
+
 tasks.named('test') {
 	useJUnitPlatform()
 	testLogging {
@@ -61,4 +61,3 @@ tasks.named('test') {
 		showStandardStreams = true
 	}
 }
-*/

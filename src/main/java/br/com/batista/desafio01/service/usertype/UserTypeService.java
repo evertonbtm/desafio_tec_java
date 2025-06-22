@@ -2,7 +2,6 @@ package br.com.batista.desafio01.service.usertype;
 
 import br.com.batista.desafio01.exception.FieldDuplicatedException;
 import br.com.batista.desafio01.model.entities.UserType;
-import br.com.batista.desafio01.model.enums.EUserType;
 import br.com.batista.desafio01.repository.IUserTypeRepository;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +34,6 @@ public class UserTypeService implements IUserTypeService {
         }
 
         return userTypeList.get(0);
-    }
-
-    public UserType findTypeShopkeeper() throws FieldDuplicatedException {
-        return findByType(EUserType.SHOPKEEPER.get());
-    }
-
-    public UserType findTypeUser() throws FieldDuplicatedException {
-        return findByType(EUserType.USER.get());
     }
 
 }
