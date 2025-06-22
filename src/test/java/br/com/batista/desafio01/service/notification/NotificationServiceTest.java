@@ -12,13 +12,12 @@ import br.com.batista.desafio01.utils.MockUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
 
-    @InjectMocks
     private NotificationService notificationService;
 
     @Mock
@@ -52,15 +50,24 @@ class NotificationServiceTest {
     @Mock
     private WebClient.ResponseSpec responseSpec;
 
-    @Value("${notify.api.url}")
-    private String apiUrl;
+    private String apiUrl = "/posts";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        // Manually instantiate NotificationService
+        notificationService = new NotificationService(notificationRepository, messageService);
+        // Inject the mock WebClient
+        Field webClientField = NotificationService.class.getDeclaredField("webClient");
+        webClientField.setAccessible(true);
+        webClientField.set(notificationService, webClient);
+        // Inject the apiUrl if needed
+        Field apiUrlField = NotificationService.class.getDeclaredField("apiUrl");
+        apiUrlField.setAccessible(true);
+        apiUrlField.set(notificationService, apiUrl);
     }
 
     @Test
-    public void when_SaveNotification_then_success() {
+    void when_SaveNotification_then_success() {
         Notification notification = new Notification();
         when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
 
@@ -71,7 +78,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    public void when_notify_then_UnavailableException() throws Exception {
+    void when_notify_then_UnavailableException() {
         Transaction transaction = MockUtils.mockTransaction();
         AuthorizeDTO authorizeDTO = new AuthorizeDTO();
         authorizeDTO.setStatus("error");
@@ -80,7 +87,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    public void when_FindByTransaction_then_success() throws Exception {
+    void when_FindByTransaction_then_success() {
         Notification notification = new Notification();
         List<Notification> notifications = List.of(notification);
 
@@ -93,7 +100,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    public void when_FindByTransaction_then_ThrowsFieldDuplicatedException() {
+    void when_FindByTransaction_then_ThrowsFieldDuplicatedException() {
         List<Notification> notifications = List.of(new Notification(), new Notification());
 
         when(notificationRepository.findListByTransactionId(anyLong())).thenReturn(notifications);
@@ -102,7 +109,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    public void when_CallNotificationApi_then_ReturnNotifyDTO() {
+    void when_CallNotificationApi_then_ReturnNotifyDTO() {
         AuthorizeDTO authorizeDTO = new AuthorizeDTO();
         authorizeDTO.setStatus("success");
 
@@ -122,7 +129,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    public void when_NotificationSchedule_then_ProcessUnsentNotifications() throws Exception {
+    void when_NotificationSchedule_then_ProcessUnsentNotifications() {
         Notification unsentNotification = new Notification();
         unsentNotification.setSent(false);
 
@@ -136,7 +143,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    public void when_NotificationSchedule_WithNoUnsentNotifications_then_DoNothing() throws Exception {
+    void when_NotificationSchedule_WithNoUnsentNotifications_then_DoNothing() {
         when(notificationRepository.findListBySent(false)).thenReturn(List.of());
 
         notificationService.notificationSchedule();
