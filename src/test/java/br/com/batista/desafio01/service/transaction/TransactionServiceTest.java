@@ -19,13 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
@@ -40,11 +38,6 @@ class TransactionServiceTest {
 
     @Mock
     INotificationService notificationService;
-
-    @BeforeEach
-    void init(){
-        Mockito.mockitoSession().initMocks(this);
-    }
 
     @Test
     void when_create_transaction_then_success() throws Exception {

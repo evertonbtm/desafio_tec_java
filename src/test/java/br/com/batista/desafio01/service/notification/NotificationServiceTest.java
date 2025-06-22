@@ -56,8 +56,7 @@ class NotificationServiceTest {
     private String apiUrl;
 
     @BeforeEach
-    public void setUp() {
-      //  notificationService.init();
+    void setUp() {
     }
 
     @Test

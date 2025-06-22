@@ -11,14 +11,12 @@ import br.com.batista.desafio01.model.entities.UserType;
 import br.com.batista.desafio01.repository.IUserRepository;
 import br.com.batista.desafio01.service.usertype.IUserTypeService;
 import br.com.batista.desafio01.utils.MockUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +25,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -40,13 +37,8 @@ class UserServiceTest {
     @Mock
     IUserRepository userRepository;
 
-    @BeforeEach
-    void init(){
-
-    }
-
     @Test
-    void when_create_user_then_success() throws Exception {
+    void when_create_user_then_success() {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
@@ -68,22 +60,25 @@ class UserServiceTest {
     }
 
     @Test
-    void when_create_user_then_fail() throws Exception {
+    void when_create_user_then_fail() {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
         userDTO.setPassword("user123!@#");
         userDTO.setEmail("user1@teste.com");
-        userDTO.setDocument("012345678910");
+        userDTO.setDocument("012345678910");an you genera
+
+        User existsUsers = userService.toEntity(userDTO);
+
         // Simulate user already exists
         when(userRepository.findListByDocumentOrEmail(userDTO.getDocument(), userDTO.getEmail()))
-            .thenReturn(Collections.singletonList(new User()));
+            .thenReturn(Collections.singletonList(existsUsers));
 
         assertThrows(br.com.batista.desafio01.exception.UserAlreadyCreatedException.class, () -> userService.create(userDTO));
     }
 
     @Test
-    void when_delete_user_then_userNotFoundException() throws Exception {
+    void when_delete_user_then_userNotFoundException()  {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
@@ -97,7 +92,7 @@ class UserServiceTest {
     }
 
     @Test
-    void when_delete_user_then_success() throws Exception {
+    void when_delete_user_then_success()  {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setName("user1");
@@ -121,7 +116,7 @@ class UserServiceTest {
     }
 
     @Test
-    void when_create_user_then_return_FieldDuplicatedException() throws Exception {
+    void when_create_user_then_return_FieldDuplicatedException()  {
 
         List<User> duplicatedList= new ArrayList<>(0);
         UserDTO userDTO = new UserDTO();
@@ -142,7 +137,7 @@ class UserServiceTest {
     }
 
     @Test
-    void when_update_user_then_success() throws Exception {
+    void when_update_user_then_success()  {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("updatedUser");
         userDTO.setPassword("updatedPassword123!@#");
@@ -177,7 +172,7 @@ class UserServiceTest {
     }
 
     @Test
-    void when_find_user_by_id_then_success() throws Exception {
+    void when_find_user_by_id_then_success()  {
         User user = new User();
         user.setIdUser(1L);
         user.setName("user1");
@@ -192,14 +187,14 @@ class UserServiceTest {
     }
 
     @Test
-    void when_find_user_by_id_then_userNotFoundException() throws Exception {
+    void when_find_user_by_id_then_userNotFoundException()  {
         when(userRepository.findById(1L)).thenReturn(java.util.Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> userService.findById(1L));
     }
 
     @Test
-    void when_create_user_with_invalid_data_then_InvalidUserException() throws Exception {
+    void when_create_user_with_invalid_data_then_InvalidUserException()  {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("");
         userDTO.setPassword("short");
