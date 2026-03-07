@@ -1,9 +1,10 @@
 package br.com.batista.desafio01.configuration.exception;
 
 import br.com.batista.desafio01.configuration.message.MessageService;
+import br.com.batista.desafio01.exception.JwtExpiredException;
+import br.com.batista.desafio01.exception.JwtInvalidException;
+import br.com.batista.desafio01.exception.JwtUnsupportedException;
 import br.com.batista.desafio01.exception.base.ApiInternalServerErrorException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class GlobalExceptionHandler {
         response.put(TIMESTAMP, LocalDateTime.now());
         response.put(STATUS, HttpStatus.BAD_REQUEST.value());
         response.put(ERROR, messageService.getMessage("internal.validation.error"));
-        response.put(MESSAGE, ERROR);
+        response.put(MESSAGE, messageService.getMessage("internal.validation.error"));
         response.put(ERRORS, errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -77,6 +78,34 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
+    }
+
+    @ExceptionHandler(JwtExpiredException.class)
+    public ResponseEntity<Map<String, Object>> handleJwtExpiredException(JwtExpiredException ex) {
+        logger.warn(ex.getMessage(), ex);
+        Map<String, Object> errors = new HashMap<>(1);
+        errors.put(ERROR, messageService.getMessage(ex.getMessage()));
+        Map<String, Object> response = new HashMap<>(4);
+        response.put(TIMESTAMP, LocalDateTime.now());
+        response.put(STATUS, HttpStatus.UNAUTHORIZED.value());
+        response.put(ERROR, messageService.getMessage("jwt.error.expired"));
+        response.put(MESSAGE, messageService.getMessage("jwt.error.expired"));
+        response.put(ERRORS, errors);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler({JwtInvalidException.class, JwtUnsupportedException.class})
+    public ResponseEntity<Map<String, Object>> handleJwtInvalidException(ApiInternalServerErrorException ex) {
+        logger.warn(ex.getMessage(), ex);
+        Map<String, Object> errors = new HashMap<>(1);
+        errors.put(ERROR, messageService.getMessage(ex.getMessage()));
+        Map<String, Object> response = new HashMap<>(4);
+        response.put(TIMESTAMP, LocalDateTime.now());
+        response.put(STATUS, HttpStatus.UNAUTHORIZED.value());
+        response.put(ERROR, messageService.getMessage("jwt.error.invalid"));
+        response.put(MESSAGE, messageService.getMessage("jwt.error.invalid"));
+        response.put(ERRORS, errors);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)

@@ -1,6 +1,10 @@
 package br.com.batista.desafio01.controller;
 
 import br.com.batista.desafio01.configuration.message.MessageService;
+import br.com.batista.desafio01.exception.FieldDuplicatedException;
+import br.com.batista.desafio01.exception.UserAlreadyCreatedException;
+import br.com.batista.desafio01.exception.UserDeletedException;
+import br.com.batista.desafio01.exception.UserTypeNotFoundException;
 import br.com.batista.desafio01.model.dto.user.UserDTO;
 import br.com.batista.desafio01.model.dto.base.BaseReturnDTO;
 import br.com.batista.desafio01.model.dto.user.UserSearchDTO;
@@ -37,7 +41,8 @@ public class UserController {
             summary = "user.controller.create.hint",
             description = "user.controller.create.message"
     )
-    public ResponseEntity<UserDTO> create(@Schema(description = "user.controller.create.hint")  @Valid @RequestBody UserDTO userDTO) throws Exception {
+    public ResponseEntity<UserDTO> create(@Schema(description = "user.controller.create.hint")  @Valid @RequestBody UserDTO userDTO)
+            throws FieldDuplicatedException, UserDeletedException, UserAlreadyCreatedException, UserTypeNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(userService.create(userDTO)));
     }
 
@@ -46,7 +51,8 @@ public class UserController {
             summary = "user.controller.update.hint",
             description = "user.controller.update.message"
     )
-    public ResponseEntity<UserDTO> update(@Schema(description = "user.controller.update.hint")  @Valid @RequestBody UserDTO userDTO) throws Exception {
+    public ResponseEntity<UserDTO> update(@Schema(description = "user.controller.update.hint")  @Valid @RequestBody UserDTO userDTO)
+            throws FieldDuplicatedException, UserDeletedException, UserAlreadyCreatedException, UserTypeNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(new UserDTO(userService.update(userDTO)));
     }
 
@@ -54,7 +60,8 @@ public class UserController {
     @Operation(
             summary = "user.controller.delete.hint"
     )
-    public ResponseEntity<BaseReturnDTO> delete(@Schema(description = "user.controller.delete.param.hint") @ParameterObject String param) throws Exception {
+    public ResponseEntity<BaseReturnDTO> delete(@Schema(description = "user.controller.delete.param.hint")
+                                                    @RequestParam String param) {
 
         userService.delete(param);
 

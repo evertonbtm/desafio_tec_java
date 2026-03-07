@@ -31,11 +31,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import java.util.Collections;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -171,6 +172,10 @@ public class UserControllerTest {
         user.setDocument("94071312033");
 
         UserDTO userDTO = new UserDTO(user);
+
+        when(userRepository.findListByDocumentOrEmail(user.getDocument(), user.getDocument()))
+                .thenReturn(Collections.singletonList(user));
+        when(userRepository.save(any())).thenReturn(user);
 
         BaseReturnDTO retorno = new BaseReturnDTO(
                 messageService.getMessage("default.status.success"),

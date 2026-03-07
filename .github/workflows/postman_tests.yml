@@ -39,6 +39,11 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and start Spring Boot app
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/desafio_tecnico_java
+          DB_USERNAME: seu_usuario
+          DB_PASSWORD: sua_senha
+          JWT_SECRET: ci-secret-key-change-in-production-min32chars
         run: |
             ./gradlew bootRun > springboot.log 2>&1 &
       

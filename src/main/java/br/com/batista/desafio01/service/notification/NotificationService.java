@@ -75,12 +75,14 @@ public class NotificationService implements INotificationService {
             NotifyDTO notifyDTO = callNotificationApi(params).block();
             if(notifyDTO != null && notifyDTO.getStatus().equals("success")){
                 saveNotification(transaction, true);
-                logger.debug(messageService.getMessage("notify.message.success"));
-            }else{
+                logger.atDebug().log(() -> messageService.getMessage("notify.message.success"));
+            } else {
                 notifyQueue(transaction);
-                logger.debug(messageService.getMessage("notify.message.error"));
+                logger.atDebug().log(() -> messageService.getMessage("notify.message.error"));
                 throw new UnavailableException(Transaction.class, messageService.getMessage("notify.unavailable"));
             }
+        } catch (UnavailableException e) {
+            throw e;
         } catch (Exception e){
             notifyQueue(transaction);
             throw new UnavailableException(Transaction.class, messageService.getMessage("notify.unavailable"));
@@ -129,7 +131,7 @@ public class NotificationService implements INotificationService {
     @Async
     @Scheduled(fixedRate = 60000)
     public void notificationSchedule() {
-        logger.debug(messageService.getMessage("notify.message.schedule"));
+        logger.atDebug().log(() -> messageService.getMessage("notify.message.schedule"));
 
         List<Notification> notificationList = notificationRepository.findListBySent(false);
 
@@ -143,6 +145,6 @@ public class NotificationService implements INotificationService {
     private void setNotificationSended(Notification notification) {
         notification.setSent(true);
         save(notification);
-        logger.debug(messageService.getMessage("notify.message.success"));
+        logger.atDebug().log(() -> messageService.getMessage("notify.message.success"));
     }
 }

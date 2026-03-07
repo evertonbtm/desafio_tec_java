@@ -7,6 +7,9 @@ public class ValidationUtils {
     private static final Pattern CPF_PATTERN = Pattern.compile("\\d{11}");
     private static final Pattern CNPJ_PATTERN = Pattern.compile("\\d{14}");
 
+    private ValidationUtils() {
+        // avoid instanciation
+    }
 
     public static boolean isValidCpfOrCnpj(String value) {
         if (value == null) return false;
@@ -42,7 +45,7 @@ public class ValidationUtils {
 
         String digits = cnpj.replaceAll("\\D", "");
 
-        if (!CNPJ_PATTERN.matcher(cnpj).matches()) return false;
+        if (!CNPJ_PATTERN.matcher(digits).matches()) return false;
 
         if (digits.matches("(\\d)\\1{13}")) return false; // Evita CNPJs com números repetidos
 

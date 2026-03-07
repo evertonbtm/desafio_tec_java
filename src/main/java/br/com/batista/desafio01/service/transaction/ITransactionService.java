@@ -2,6 +2,11 @@ package br.com.batista.desafio01.service.transaction;
 
 import br.com.batista.desafio01.model.dto.TransactionDTO;
 import br.com.batista.desafio01.model.entities.Transaction;
+import br.com.batista.desafio01.exception.FieldDuplicatedException;
+import br.com.batista.desafio01.exception.InsuficientBalanceException;
+import br.com.batista.desafio01.exception.UnavailableException;
+import br.com.batista.desafio01.exception.UserDeletedException;
+import br.com.batista.desafio01.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -17,7 +22,9 @@ public interface ITransactionService {
 
     Transaction save(Transaction transaction);
 
-    Transaction findByUser(String userDocumentOrEmail) throws Exception;
+    Transaction findByUser(String userDocumentOrEmail) throws FieldDuplicatedException, UserDeletedException;
 
-    Transaction processDTO(TransactionDTO transactionDTO) throws Exception;
+    Transaction processDTO(TransactionDTO transactionDTO)
+            throws FieldDuplicatedException, UserDeletedException, UserNotFoundException,
+                   InsuficientBalanceException, UnavailableException;
 }
