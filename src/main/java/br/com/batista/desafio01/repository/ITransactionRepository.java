@@ -13,7 +13,8 @@ import java.util.List;
 public interface ITransactionRepository extends CrudRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
 
 
-    @Query("SELECT t FROM Transaction AS t INNER JOIN User u WHERE u.document = :user or u.email = :user")
+    @Query("SELECT t FROM Transaction AS t WHERE t.payer.document = :user OR t.payer.email = :user " +
+            "OR t.payee.document = :user OR t.payee.email = :user")
     public List<Transaction> findListByUser(@Param("user") String user);
 
 }

@@ -1,66 +1,73 @@
 package br.com.batista.desafio01.configuration.auth;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import br.com.batista.desafio01.exception.JwtExpiredException;
+import br.com.batista.desafio01.exception.JwtInvalidException;
+import br.com.batista.desafio01.exception.JwtUnsupportedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 @Service
 public class JwtAuthUtil {
 
-    private static final String auth_key = "e2b00f30f6c345973ce2d1029d2625776151e1bc246f9792f818778b405a4fdf";
+    @Value("${jwt.secret.key}")
+    private String secretKeyValue;
 
-    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(auth_key.getBytes());
+    private Key secretKey;
 
     private static final long EXPIRATION_TIME = 43200000; // 12 hours in milliseconds
 
+    @PostConstruct
+    public void init() {
+        this.secretKey = Keys.hmacShaKeyFor(secretKeyValue.getBytes(StandardCharsets.UTF_8));
+    }
+
     // Generate a JWT token
-    public static String generateToken(String username) {
+    public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        return validateTokenAndGetSubject(token);
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername());
     }
 
-    public static String validateToken(String token) {
+    public String validateTokenAndGetSubject(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
+                    .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
             return claims.getSubject();
         } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Token has expired", e);
+            throw new JwtExpiredException("jwt.error.expired", e);
         } catch (UnsupportedJwtException e) {
-            throw new RuntimeException("Unsupported token", e);
+            throw new JwtUnsupportedException("jwt.error.unsupported", e);
         } catch (MalformedJwtException e) {
-            throw new RuntimeException("Malformed token", e);
+            throw new JwtInvalidException("jwt.error.malformed", e);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Token is null or empty", e);
+            throw new JwtInvalidException("jwt.error.empty", e);
         }
     }
 }

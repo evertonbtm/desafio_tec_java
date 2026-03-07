@@ -6,7 +6,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,9 +19,13 @@ public class LoginService implements UserDetailsService {
 
     private final MessageService messageService;
 
-    public LoginService(IUserRepository userRepository, MessageService messageService) {
+    private final PasswordEncoder passwordEncoder;
+
+    public LoginService(IUserRepository userRepository, MessageService messageService,
+                        @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.messageService = messageService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -29,7 +34,7 @@ public class LoginService implements UserDetailsService {
         br.com.batista.desafio01.model.entities.User user = userRepository.findUserByName(username);
 
         if (user != null) {
-            return new User(user.getName(), new BCryptPasswordEncoder().encode(user.getPassword()), new ArrayList<>(0));
+            return new User(user.getName(), passwordEncoder.encode(user.getPassword()), new ArrayList<>(0));
         }
 
         throw new UsernameNotFoundException(messageService.getMessage("user.notfound"));

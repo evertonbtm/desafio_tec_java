@@ -110,7 +110,7 @@ public class TransactionService implements ITransactionService {
         var payer = userService.findByDocumentOrEmail(transactionDTO.getPayee(), transactionDTO.getPayee());
 
         if(payer == null){
-            throw new UserNotFoundException(User.class, "document or email", transactionDTO.getPayer());
+            throw new UserNotFoundException(User.class, "document or email", transactionDTO.getPayee());
         }
 
         transaction.setPayee(payer);

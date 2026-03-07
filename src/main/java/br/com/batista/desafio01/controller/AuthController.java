@@ -19,9 +19,12 @@ public class AuthController {
 
     private final UserDetailsService userDetailsService;
 
-    public AuthController( UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+    private final JwtAuthUtil jwtAuthUtil;
+
+    public AuthController(UserDetailsService userDetailsService, AuthenticationManager authenticationManager, JwtAuthUtil jwtAuthUtil) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.jwtAuthUtil = jwtAuthUtil;
     }
 
     @PostMapping("/login")
@@ -31,7 +34,7 @@ public class AuthController {
         );
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-        String token = JwtAuthUtil.generateToken(userDetails.getUsername());
+        String token = jwtAuthUtil.generateToken(userDetails.getUsername());
 
         return ResponseEntity.ok(new AuthResponseDTO(token));
     }
