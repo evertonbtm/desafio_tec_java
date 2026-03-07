@@ -2,8 +2,12 @@ package br.com.batista.desafio01.service.kafka;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
+@ConditionalOnBean(KafkaTemplate.class)
 public class KafkaProducer {
 
     private final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
@@ -16,6 +20,6 @@ public class KafkaProducer {
 
     public void sendMessage(String topic, String message) {
         kafkaTemplate.send(topic, message);
-        logger.debug("Sent message: ".concat(message));
+        logger.atDebug().log(() -> "Sent message: " + message);
     }
 }

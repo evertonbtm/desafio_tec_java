@@ -1,5 +1,10 @@
 package br.com.batista.desafio01.controller;
 
+import br.com.batista.desafio01.exception.FieldDuplicatedException;
+import br.com.batista.desafio01.exception.InsuficientBalanceException;
+import br.com.batista.desafio01.exception.UnavailableException;
+import br.com.batista.desafio01.exception.UserDeletedException;
+import br.com.batista.desafio01.exception.UserNotFoundException;
 import br.com.batista.desafio01.model.dto.TransactionDTO;
 import br.com.batista.desafio01.service.transaction.ITransactionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +31,9 @@ public class TransactionController {
     }
 
     @PostMapping(path="send")
-    public ResponseEntity<TransactionDTO> send(@Valid @RequestBody TransactionDTO transactionDTO) throws Exception {
+    public ResponseEntity<TransactionDTO> send(@Valid @RequestBody TransactionDTO transactionDTO)
+            throws FieldDuplicatedException, UserDeletedException, UserNotFoundException,
+                   InsuficientBalanceException, UnavailableException {
         return ResponseEntity.status(HttpStatus.CREATED).body(new TransactionDTO(transactionService.processDTO(transactionDTO)));
     }
 
